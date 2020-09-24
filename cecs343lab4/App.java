@@ -7,22 +7,10 @@
 package cecs343lab4;
 
 import java.awt.*;
-//import java.awt.Component;
-//import java.awt.Dimension;
 import java.awt.event.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
-//import java.awt.event.MouseListener;
 import java.net.URL;
 import java.net.MalformedURLException;
 import javax.swing.*;
-//import javax.swing.JButton;
-//import javax.swing.JFrame;
-//import javax.swing.JScrollPane;
-//import javax.swing.JTable;
-//import javax.swing.JPanel;
 import javax.swing.table.TableColumn;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
