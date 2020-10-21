@@ -77,66 +77,102 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
 
-public class App extends JFrame{
+
+
+public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
     JTable table;
     JScrollPane scrollPane; 
-    
+    final JPopupMenu popup;
+    JMenuItem addMenuSong;
+    JMenuItem deleteMenuSong;
+    JMenuItem exit;
+    JMenuItem song;
+    JMenuItem deleted;
+    JMenuBar menuBar;
+    JMenu menu;
     MyDB mydb;
     
-    private final JPopupMenu popup = new JPopupMenu();
+    
+    
     int CurrentSelectedRow;
+    
     JButton PlayButton; // play button
     JButton PauseButton; // pause button
     JButton PreviousButton; // previous song
     JButton NextButton; // next song
-    JButton AddSongButton; // add song
+//    JButton AddSongButton; // add song
     
-    ButtonListener bl; // button listener play
-    ButtonListener b2; // button listener pause
-    ButtonListener b3; // button listener previous
-    ButtonListener b4; // button listener next
-    ButtonListener b5; // button listener add song
+  
     JPanel main;
+    final JFileChooser fc;
     
     public App() throws SQLException{
         mydb = new MyDB();
         mydb.Connect();
 
         player = new BasicPlayer();
-        bl = new ButtonListener();
-        b2 = new ButtonListener();
-        b3 = new ButtonListener();
-        b4 = new ButtonListener();
-        b5 = new ButtonListener();
+      
+        fc = new JFileChooser();
+        fc.setCurrentDirectory(new File("c:\\Users\\Sandra C\\Desktop\\CECS343"));
+        
+        menuBar = new JMenuBar();
+        menu = new JMenu("File");
+        song =new JMenuItem("Add Song");
+        deleted =new JMenuItem("Delete Song");
+        exit =new JMenuItem("Exit"); 
+        
+        menu.add(song);
+        menu.add(deleted);
+        menu.add(exit);
+        
+        menuBar.add(menu);
+        
+        song.addActionListener(this);
+        // ^^ adds the menu item to add song to action listener
+                                       
+        exit.addActionListener(this); //adds exit button to listener 
+        
+        deleted.addActionListener(this); 
+        // adds delete in menu bar to listener 
+        
+        
+        popup = new JPopupMenu();
+        addMenuSong = new JMenuItem("Add Song"); // menu item add song
+        deleteMenuSong = new JMenuItem("Delete Song"); // menu item delete song
+        
+        popup.add(addMenuSong);
+        popup.add(deleteMenuSong);
+        
+        addMenuSong.addActionListener(this);
+        
+        deleteMenuSong.addActionListener(this);  // adds popup delete to listener
         
         PreviousButton = new JButton("<<");
-        PreviousButton.addActionListener(b3);
+        PreviousButton.addActionListener(this);
         PreviousButton.setPreferredSize(new Dimension(100, 25));
         
-        PlayButton = new JButton(">");
-        PlayButton.addActionListener(bl);
+        PlayButton = new JButton("Play");
+        PlayButton.addActionListener(this);
         PlayButton.setPreferredSize(new Dimension(100,25));
         PlayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        PauseButton = new JButton("||");
-        PauseButton.addActionListener(b2);
+        PauseButton = new JButton("Pause");
+        PauseButton.addActionListener(this);
         PauseButton.setPreferredSize(new Dimension(100,25));
         
         NextButton = new JButton(">>");
-        NextButton.addActionListener(b4);
+        NextButton.addActionListener(this);
         NextButton.setPreferredSize(new Dimension(100, 25));
         
-        AddSongButton = new JButton("+");
-        AddSongButton.addActionListener(b5);
-        AddSongButton.setPreferredSize(new Dimension(45, 25));
-        
+       
         main = new JPanel();
         
 
@@ -144,6 +180,8 @@ public class App extends JFrame{
         //colums labels the columns in the table
         //if the table is not in a scrollpane the column header will not show
         //it would have to be added separately
+        
+        // add genre, year, comment 
         String[] columns = {"Album", "Title", "Artist"};    
         //data holds the table data and maps as a 2d array into the table
         Object[][] data = mydb.getSongs();
@@ -154,8 +192,10 @@ public class App extends JFrame{
         //create the table
         table = new JTable(dm);
         
+        // creating the pop up menu
+        table.setComponentPopupMenu(popup);
+        main.setComponentPopupMenu(popup); 
         
-
         //assign the listener
         table.addMouseListener(mouseListener);
         
@@ -173,13 +213,19 @@ public class App extends JFrame{
         
         main.setSize(700,500);
         
-        main.add(AddSongButton);
+//        main.add(AddSongButton);
         main.add(scrollPane);
         main.add(PreviousButton);
         main.add(PlayButton);
         main.add(PauseButton);
         main.add(NextButton);
         this.setTitle("DJ Play My Song!");
+        this.add(main);
+        this.setSize(500, 200);
+        this.setJMenuBar(menuBar);
+        this.setSize(500,200);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         table.setDropTarget(new DropTarget() {
         @Override
@@ -232,11 +278,11 @@ public class App extends JFrame{
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (SQLException ex) {
+                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (UnsupportedTagException ex) {
                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InvalidDataException ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (SQLException ex) {
                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
@@ -258,69 +304,119 @@ public class App extends JFrame{
         }
     };
     
-    class ButtonListener implements ActionListener {
-    @Override
-        public void actionPerformed(ActionEvent e) {
-            String url=null;
-            String station = null;
-            
-            // gets the element from first row in selected column 
-            url = (String)table.getValueAt(CurrentSelectedRow, 0); 
-            station = (String)table.getValueAt(CurrentSelectedRow, 1);
-            System.out.println(station);
-            
-            try {
+   public void addSongFromBar() throws SQLException{
+     int returnValue = fc.showOpenDialog(this);
+     
+     if(returnValue == JFileChooser.APPROVE_OPTION) {
 
-                player.open(new URL(url));
-                player.play();
+         try {
+            File file = fc.getSelectedFile();
+             Mp3File mp3 = new Mp3File(file);
+            ID3v2 id3v2Tag = mp3.getId3v2Tag();
+            String album = id3v2Tag.getAlbum();
+            String artist = id3v2Tag.getArtist();
+            String title = id3v2Tag.getTitle();
+            mydb.addSongs(album, title, artist);
+            
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            
+            if (table.getRowCount() > 0) {
+                model.insertRow(model.getRowCount() - 1, new Object[]{album, title,artist});
             }
-        
-    catch (MalformedURLException ex) {
-     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-    System.out.println("Malformed url");
+            model.insertRow(0, new Object[]{album, title,artist});
 
+             
+         } catch (IOException ex) {
+             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (UnsupportedTagException ex) {
+             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (InvalidDataException ex) {
+             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+         }
+     }
     }
-    catch (BasicPlayerException ex) {
-    System.out.println("BasicPlayer exception");
-    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+   
+   public void deleteSong() throws SQLException {
+     //get the selected row -->  (SR) 
+     //call the default table model .deleterow(SR)
+    CurrentSelectedRow = table.getSelectedRow();
 
-     }          
-        } // end actionPerformed
-    public void pauseBtnPerformed(ActionEvent evt){
-        try{
-            if(evt.getSource() == PauseButton){
-                player.stop();
-            }
-            
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null,e);
-        }
-    } // end pause buttonListener
-    
-    
-    
-    } // end button listener
-   /* class MyDropTarget extends DropTarget {
-        public  void drop(DropTargetDropEvent evt) {
-            try {
-                evt.acceptDrop(DnDConstants.ACTION_COPY);
-               
-                List result = new ArrayList();
-                result = (List) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                
+     String album = (String)table.getValueAt(CurrentSelectedRow, 0);
+     String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+     String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+     
+     mydb.deleteSongs(album,title,artist);
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    model.removeRow(CurrentSelectedRow);
+   } 
+   
+   public void playSong() {
+   File arg = null;
+   String dir = null;
+   CurrentSelectedRow = table.getSelectedRow();
+   try {
+       String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+      
+       if (title.equalsIgnoreCase("Stronger")) {
+       dir = "Kanye West - Stronger.mp3";
+       arg = new File(dir);
 
-                for(Object o : result)
-                    System.out.println(o.toString());
+       }
+       
+       else if (title.equalsIgnoreCase("Disturbia")){
+        dir = "C:\\Users\\Sandra C\\Desktop\\FALL 2020\\CECS 343\\Rihanna-Disturbia.mp3";
+        
+        arg = new File(dir);
+        
+
+       }
+       
               
-                        }
-            catch (Exception ex){
-                ex.printStackTrace();
-            }
-        }*/
+       player.open(arg);
+      
+        player.play();
+       
+       
+   
+   }
+   catch(Exception ex) {
+       
+           System.out.println("BasicPlayer exception");
+
+    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+   
+   
+   }
+   
+   }
+   
+        public void actionPerformed(ActionEvent e)  {
+             String choice = e.getActionCommand();
+            if(choice.equals("Exit")){
+             System.exit(0);
+        }else if(choice.equals("Add Song")){
+                 try {
+                     addSongFromBar();
+                 } catch (SQLException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+        }
+        else if (choice.equals("Delete Song")) {
+                 try {
+                  
+                     deleteSong();
+                 } catch (SQLException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+        }
+        else if (choice.equals("Play")) {
+
+        
+        }
+     
+       
+        } // end actionPerformed
+   
            
     }
     
-
-
-
-        
