@@ -85,7 +85,7 @@ public class MyDB {
      }
        else {
        
-       songs = new Object[10][3];
+       songs = new Object[1][3];
        } 
 
 
@@ -107,10 +107,23 @@ public class MyDB {
        
        
        
-       
-   
-      
+         
    }
    
+   public void deleteSongs(String album, String Title, String Artist) throws SQLException {
+   
+   String stat = "DELETE FROM playlist where Album=? and Title=? and Artist=?";
+      PreparedStatement ps = connection.prepareStatement(stat);
+
+      ps.setString(1, album);
+      ps.setString(2, Title);
+      ps.setString(3, Artist);
+      ps.executeUpdate();
+   
+   
+   }
+   
+   
+  
    
 }
