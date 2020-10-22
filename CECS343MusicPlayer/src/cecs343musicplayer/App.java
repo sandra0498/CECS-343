@@ -78,7 +78,6 @@ public class App extends JFrame implements ActionListener{
     JButton PauseButton; // pause button
     JButton PreviousButton; // previous song
     JButton NextButton; // next song
-//    JButton AddSongButton; // add song
     
   
     JPanel main;
@@ -90,7 +89,7 @@ public class App extends JFrame implements ActionListener{
 
         player = new BasicPlayer();        
         fc = new JFileChooser();
-//        fc.setCurrentDirectory(new File("c:\\Users\\Sandra C\\Desktop\\CECS343"));
+//        fc.setCurrentDirectory(new File("c:/Users/Sandra C/Desktop/CECS343"));
         
         menuBar = new JMenuBar();
         menu = new JMenu("File");
@@ -176,17 +175,16 @@ public class App extends JFrame implements ActionListener{
         //first get the column from the column model from the table
         //column 0 is the leftmost - make it 250 pixels
         TableColumn column = table.getColumnModel().getColumn(0);
-        column.setPreferredWidth(50);
-        //using the same TableColumn variable set the "Year" coulumn to 20
+        column.setPreferredWidth(75);
+        //setting the size for title a little wider than the rest 
         column = table.getColumnModel().getColumn(1); 
-        column.setPreferredWidth(125);
+        column.setPreferredWidth(180);
         
         scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(475,100));
+        scrollPane.setPreferredSize(new Dimension(500,100));
         
         main.setSize(700,500);
         
-//        main.add(AddSongButton);
         main.add(scrollPane);
         main.add(PreviousButton);
         main.add(PlayButton);
