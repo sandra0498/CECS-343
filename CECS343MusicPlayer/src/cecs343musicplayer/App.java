@@ -226,8 +226,7 @@ public class App extends JFrame implements ActionListener{
                         Point point = dtde.getLocation();
                         int row = table.rowAtPoint(point);
                         DefaultTableModel model = (DefaultTableModel) table.getModel();
-//                        for (Object value : fileList) {
-                            Object value = fileList.get(0);
+                        for (Object value : fileList) {
                              Mp3File mp3 = new Mp3File((File) value);
                              ID3v2 id3v2Tag = mp3.getId3v2Tag();
                              String album = id3v2Tag.getAlbum();
@@ -245,7 +244,7 @@ public class App extends JFrame implements ActionListener{
                                 } else {
                                     model.insertRow(row, new Object[]{album, title,artist,year,genre,comments});
                                     row++;
-//                                }
+                                }
                             }
                         }
                     }
