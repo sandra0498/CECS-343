@@ -2,16 +2,9 @@ package cecs343musicplayer;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Connection;
-//import com.sun.jdi.connect.spi.Connection;
-//import com.mpatric.mp3agic.ID3v1Genres;
-//import com.mpatric.mp3agic.ID3v2;
-//import com.mpatric.mp3agic.InvalidDataException;
-//import com.mpatric.mp3agic.Mp3File;
-//import com.mpatric.mp3agic.UnsupportedTagException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.awt.*;
+
+
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,7 +44,6 @@ public class MyDB {
            System.out.println("Connected to mytunes");
        }catch (SQLException ex){
            System.out.println("Connection unsuccessful");
-//           Logger.getLogger(MyDB.class.getName().log(Level.SEVERE, null, ex));
        }
    }
    public Object[][] getSongs() throws SQLException{
