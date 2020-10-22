@@ -623,6 +623,9 @@ public class App extends JFrame implements ActionListener{
                   System.out.println("No song chosen");
                  
                  }
+                    catch(IllegalArgumentException ill) {
+                 System.out.println("cannot skip to previous!");
+                 }
         
         }
             
@@ -637,6 +640,9 @@ public class App extends JFrame implements ActionListener{
                     catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("No song chosen");
                  
+                 }
+                 catch(IllegalArgumentException ill) {
+                 System.out.println("cannot skip ahead!");
                  }
         
         }
