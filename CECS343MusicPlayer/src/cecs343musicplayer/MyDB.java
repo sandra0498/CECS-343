@@ -26,7 +26,8 @@ import java.sql.ResultSet;
 
 /**
  *
- * @author Seren
+ * @author Serenity Brown
+ * @author Sandra Chavez
  */
 public class MyDB {
    String user = "root";
@@ -73,19 +74,22 @@ public class MyDB {
        System.out.println("Amount of rows "+length);
        
        if(length > 0 ) {
-       songs = new Object[length][3];
+       songs = new Object[length][6];
         while(result.next()){
 
          songs[j][0] = result.getString("Album");
          songs[j][1] = result.getString("Title");
          songs[j][2] = result.getString("Artist");
+         songs[j][3] = result.getString("Year");
+         songs[j][4] = result.getString("Genre");
+         songs[j][5] = result.getString("Comments");
          j++;  
        }  
         
      }
        else {
        
-       songs = new Object[1][3];
+       songs = new Object[0][6];
        } 
 
 
@@ -93,21 +97,22 @@ public class MyDB {
       return songs;
     }
    
-   public void addSongs(String album, String Title, String Artist) throws SQLException {
+   public void addSongs(String album, String Title, String Artist, String Year, 
+           String Genre, String Comments) throws SQLException {
        
-       String stat = "INSERT INTO playlist(Album,Title,Artist) Values(?,?,?)";
+       String stat = "INSERT INTO playlist(Album,Title,Artist,Year,Genre,Comments) Values(?,?,?,?,?,?)";
        PreparedStatement ps  = connection.prepareStatement(stat);
        
        ps.setString(1,album);
        ps.setString(2, Title);
        ps.setString(3,Artist);
+       ps.setString(4,Year);
+       ps.setString(5,Genre);
+       ps.setString(6,Comments);
        
        
        ps.executeUpdate();
-       
-       
-       
-         
+            
    }
    
    public void deleteSongs(String album, String Title, String Artist) throws SQLException {
