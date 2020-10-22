@@ -172,15 +172,14 @@ public class App extends JFrame implements ActionListener{
         
         //assign the listener
         table.addMouseListener(mouseListener);
-        
         //change some column's width
         //first get the column from the column model from the table
         //column 0 is the leftmost - make it 250 pixels
         TableColumn column = table.getColumnModel().getColumn(0);
-        column.setPreferredWidth(25);
+        column.setPreferredWidth(50);
         //using the same TableColumn variable set the "Year" coulumn to 20
         column = table.getColumnModel().getColumn(1); 
-        column.setPreferredWidth(20);
+        column.setPreferredWidth(125);
         
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(475,100));
@@ -648,9 +647,6 @@ public class App extends JFrame implements ActionListener{
         }
      
        
-        } // end actionPerformed
-
-   
-           
+        } // end actionPerformed     
     }
     
