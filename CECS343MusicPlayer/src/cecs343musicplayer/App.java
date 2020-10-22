@@ -4,45 +4,13 @@
  * and open the template in the editor.
  */
 package cecs343musicplayer;
-//import java.awt.datatransfer.DataFlavor;
-//import java.awt.dnd.DnDConstants;
-//import java.awt.dnd.DropTarget;
-//import java.awt.dnd.DropTargetDropEvent;
-//import java.io.File;
-//import java.util.ArrayList;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-import javax.swing.JPopupMenu;
-import javazoom.jlgui.basicplayer.BasicPlayer;
-import javazoom.jlgui.basicplayer.BasicPlayerException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.table.DefaultTableModel;
 
-import com.mpatric.mp3agic.ID3v1;
+import java.awt.*;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Menu;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -58,18 +26,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -77,17 +40,23 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
 
-
+/**
+ *
+ * @author Serenity Brown
+ * @author Sandra Chavez
+ */
 
 public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
+    BasicController BC;
+
     JTable table;
     JScrollPane scrollPane; 
     final JPopupMenu popup;
@@ -96,6 +65,7 @@ public class App extends JFrame implements ActionListener{
     JMenuItem exit;
     JMenuItem song;
     JMenuItem deleted;
+    JMenuItem open;
     JMenuBar menuBar;
     JMenu menu;
     MyDB mydb;
@@ -114,26 +84,30 @@ public class App extends JFrame implements ActionListener{
     JPanel main;
     final JFileChooser fc;
     
-    public App() throws SQLException{
+    public App() throws SQLException {
         mydb = new MyDB();
         mydb.Connect();
 
-        player = new BasicPlayer();
-      
+        player = new BasicPlayer();        
         fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("c:\\Users\\Sandra C\\Desktop\\CECS343"));
+//        fc.setCurrentDirectory(new File("c:\\Users\\Sandra C\\Desktop\\CECS343"));
         
         menuBar = new JMenuBar();
         menu = new JMenu("File");
         song =new JMenuItem("Add Song");
         deleted =new JMenuItem("Delete Song");
+        open = new JMenuItem("Open Song");
         exit =new JMenuItem("Exit"); 
         
         menu.add(song);
         menu.add(deleted);
+        menu.add(open);
         menu.add(exit);
         
         menuBar.add(menu);
+        
+        open.addActionListener(this);
+        
         
         song.addActionListener(this);
         // ^^ adds the menu item to add song to action listener
@@ -155,7 +129,7 @@ public class App extends JFrame implements ActionListener{
         
         deleteMenuSong.addActionListener(this);  // adds popup delete to listener
         
-        PreviousButton = new JButton("<<");
+        PreviousButton = new JButton("|<");
         PreviousButton.addActionListener(this);
         PreviousButton.setPreferredSize(new Dimension(100, 25));
         
@@ -168,7 +142,7 @@ public class App extends JFrame implements ActionListener{
         PauseButton.addActionListener(this);
         PauseButton.setPreferredSize(new Dimension(100,25));
         
-        NextButton = new JButton(">>");
+        NextButton = new JButton(">|");
         NextButton.addActionListener(this);
         NextButton.setPreferredSize(new Dimension(100, 25));
         
@@ -182,7 +156,7 @@ public class App extends JFrame implements ActionListener{
         //it would have to be added separately
         
         // add genre, year, comment 
-        String[] columns = {"Album", "Title", "Artist"};    
+        String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
         //data holds the table data and maps as a 2d array into the table
         Object[][] data = mydb.getSongs();
         
@@ -219,6 +193,7 @@ public class App extends JFrame implements ActionListener{
         main.add(PlayButton);
         main.add(PauseButton);
         main.add(NextButton);
+        
         this.setTitle("DJ Play My Song!");
         this.add(main);
         this.setSize(500, 200);
@@ -226,7 +201,7 @@ public class App extends JFrame implements ActionListener{
         this.setSize(500,200);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
         table.setDropTarget(new DropTarget() {
         @Override
         public synchronized void dragOver(DropTargetDragEvent dtde) {
@@ -261,14 +236,17 @@ public class App extends JFrame implements ActionListener{
                              String album = id3v2Tag.getAlbum();
                              String artist = id3v2Tag.getArtist();
                              String title = id3v2Tag.getTitle();
-                             mydb.addSongs(album, title, artist);
+                             String year = id3v2Tag.getYear();
+                             String genre = id3v2Tag.getGenreDescription();
+                             String comments = id3v2Tag.getComment();
+                             mydb.addSongs(album, title, artist,year,genre,comments);
                              System.out.println("This is the title "+title);
                             if (value instanceof File) {
                                 File f = (File) value;
                                 if (row < 0) {
-                                    model.addRow(new Object[]{album, title,artist});
+                                    model.addRow(new Object[]{album, title,artist,year,genre,comments});
                                 } else {
-                                    model.insertRow(row, new Object[]{album, title,artist});
+                                    model.insertRow(row, new Object[]{album, title,artist,year,genre,comments});
                                     row++;
 //                                }
                             }
@@ -304,7 +282,21 @@ public class App extends JFrame implements ActionListener{
         }
     };
     
-   public void addSongFromBar() throws SQLException{
+    
+    //function to open and play a song that is not in the library 
+   public void openSong() throws BasicPlayerException, IOException {
+    int returnValue = fc.showOpenDialog(this);
+    if(returnValue == JFileChooser.APPROVE_OPTION){
+    
+    File file = fc.getSelectedFile();
+    player.open(file);
+    player.play();
+    }
+
+   
+   
+   } 
+   public void addSong() throws SQLException{
      int returnValue = fc.showOpenDialog(this);
      
      if(returnValue == JFileChooser.APPROVE_OPTION) {
@@ -316,14 +308,20 @@ public class App extends JFrame implements ActionListener{
             String album = id3v2Tag.getAlbum();
             String artist = id3v2Tag.getArtist();
             String title = id3v2Tag.getTitle();
-            mydb.addSongs(album, title, artist);
+            String year = id3v2Tag.getYear();
+            String genre = id3v2Tag.getGenreDescription();
+            String comments = id3v2Tag.getComment();
+            mydb.addSongs(album, title, artist,year,genre,comments);
             
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             
             if (table.getRowCount() > 0) {
-                model.insertRow(model.getRowCount() - 1, new Object[]{album, title,artist});
+                model.insertRow(model.getRowCount(), new Object[]{album, title,artist,year,genre,comments});
             }
-            model.insertRow(0, new Object[]{album, title,artist});
+            else{
+            model.insertRow(0, new Object[]{album, title,artist,year,genre,comments});
+            }
+            
 
              
          } catch (IOException ex) {
@@ -350,55 +348,215 @@ public class App extends JFrame implements ActionListener{
     model.removeRow(CurrentSelectedRow);
    } 
    
-   public void playSong() {
-   File arg = null;
-   String dir = null;
+   public void playSong() throws BasicPlayerException, IOException {
+       
+     
+//   File arg = null;
+//   String dir = null;
    CurrentSelectedRow = table.getSelectedRow();
-   try {
+
        String title = (String)table.getValueAt(CurrentSelectedRow, 1);
-      
+      if (title != null) {
        if (title.equalsIgnoreCase("Stronger")) {
-       dir = "Kanye West - Stronger.mp3";
-       arg = new File(dir);
+           String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
+
+            File f = new File(dir);
+            player.open(f);
+            player.play();
+            System.out.println("Playing this song");
+
 
        }
        
        else if (title.equalsIgnoreCase("Disturbia")){
-        dir = "C:\\Users\\Sandra C\\Desktop\\FALL 2020\\CECS 343\\Rihanna-Disturbia.mp3";
+           System.out.println("goes into this conditional ");
+        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
         
-        arg = new File(dir);
+        File arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+       
+       }
+       
+       else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
+           
+        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
         
+        File arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+     
+       }
+       
+        else if (title.equalsIgnoreCase("Eyes like sky")) {
+            
+               
+        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
+        
+        File arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+     
+   
+        }
+       else if (title.equalsIgnoreCase("Whatta Man")){
+        
+        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
+        
+        File arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+    
+       }
+      
+   }
+      
+      else {
+      
+      System.out.println("There is nothing to play!");
+      }
+       
+       
+ 
+ 
+   }
+   
+   public void skiptoprevious()throws BasicPlayerException, IOException{
+      CurrentSelectedRow = table.getSelectedRow();
+      
+     
+      if (CurrentSelectedRow == 0) {
+        table.setRowSelectionInterval(table.getRowCount()-1 , table.getRowCount()-1);
+          playSong(table.getRowCount() - 1 );
+      }
+      
+      else {
+        table.setRowSelectionInterval(CurrentSelectedRow - 1 , CurrentSelectedRow - 1 );
+        playSong(CurrentSelectedRow - 1);
+      }
+
+   } 
+   
+   public void skiptonext()throws BasicPlayerException, IOException{
+        CurrentSelectedRow = table.getSelectedRow();
+        
+        // if selected is the last song -> play first song 
+        if (CurrentSelectedRow == table.getRowCount() - 1) {
+            table.setRowSelectionInterval(0 , 0);
+            playSong(0);
+        }
+        
+        else {
+            table.setRowSelectionInterval(CurrentSelectedRow + 1 , CurrentSelectedRow + 1 );
+        playSong(CurrentSelectedRow + 1);
+        }
+
+   
+   } 
+   
+    /**
+     *
+     * @param newRow - the new row that is playing 
+     */
+    public void playSong(int newRow) throws BasicPlayerException {
+      File arg = null;
+    String dir = null;
+    Mp3File mp3 = null;
+   CurrentSelectedRow = newRow;
+        String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+      
+       if (title != null){
+           
+       if (title.equalsIgnoreCase("Stronger")) {
+            dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
+
+            File f = new File(dir);
+            player.open(f);
+            player.play();
+            System.out.println("Playing this song");
+
 
        }
        
-              
-       player.open(arg);
-      
-        player.play();
-       
-       
-   
-   }
-   catch(Exception ex) {
-       
-           System.out.println("BasicPlayer exception");
+       else if (title.equalsIgnoreCase("Disturbia")){
+           System.out.println("goes into this conditional ");
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
+        
+        arg = new File(dir);
 
-    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+       
+       }
+       
+       else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
+           
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
+        
+        arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+     
+       }
+       
+        else if (title.equalsIgnoreCase("Eyes like sky")) {
+            
+               
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
+        
+        arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+     
    
-   
+        }
+       
+        else if (title.equalsIgnoreCase("Whatta Man")){
+        
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
+        
+        arg = new File(dir);
+
+        player.open(arg);
+        player.play();
+        System.out.println("Playing this song");
+    
+       }
+    }
+       
+       else {
+       
+       System.out.println("There is still no song to play!");
+       }
+      
    }
-   
-   }
-   
+  
         public void actionPerformed(ActionEvent e)  {
              String choice = e.getActionCommand();
             if(choice.equals("Exit")){
              System.exit(0);
         }else if(choice.equals("Add Song")){
                  try {
-                     addSongFromBar();
+                     addSong();
                  } catch (SQLException ex) {
                      Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("");
+                 
                  }
         }
         else if (choice.equals("Delete Song")) {
@@ -408,14 +566,84 @@ public class App extends JFrame implements ActionListener{
                  } catch (SQLException ex) {
                      Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                  }
+                catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("Nothing to delete, add songs first!");
+                 
+                 }
+                 
+        }
+        else if (choice.equals("Open Song")) {
+                 try {
+                     openSong();
+                 } catch (BasicPlayerException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (IOException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+        
         }
         else if (choice.equals("Play")) {
+                 try {
+                     playSong();
+                 } catch (BasicPlayerException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (IOException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("No song chosen");
+                 
+                 }
 
+        
+        }
+        
+        else if (choice.equals("Pause")) {
+                 try {
+                     player.pause();
+                 } catch (BasicPlayerException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                    catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("No song chosen");
+                 
+                 }
+        
+        }
+            
+        else if (choice.equals("|<")) {
+                 try {
+                     skiptoprevious();
+                 } catch (BasicPlayerException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (IOException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                    catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("No song chosen");
+                 
+                 }
+        
+        }
+            
+        else if (choice.equals(">|")) {
+                 try {
+                     skiptonext();
+                 } catch (BasicPlayerException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (IOException ex) {
+                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                    catch (ArrayIndexOutOfBoundsException indexOut) {
+                  System.out.println("No song chosen");
+                 
+                 }
         
         }
      
        
         } // end actionPerformed
+
    
            
     }
