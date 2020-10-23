@@ -73,11 +73,13 @@ public class App extends JFrame implements ActionListener{
     
     
     int CurrentSelectedRow;
+    String currentTitlePlaying; 
     
     JButton PlayButton; // play button
     JButton PauseButton; // pause button
     JButton PreviousButton; // previous song
     JButton NextButton; // next song
+    JButton StopButton; //
     
   
     JPanel main;
@@ -344,6 +346,26 @@ public class App extends JFrame implements ActionListener{
     model.removeRow(CurrentSelectedRow);
    } 
    
+   public boolean isSongPlaying() {
+   if (player.getStatus() == BasicPlayer.PLAYING) {
+   
+   return true;
+   
+   }
+   return false;
+   }
+   
+   public boolean isSongPaused() {
+   if (player.getStatus() == BasicPlayer.PAUSED) {
+   
+   return true;
+   
+   }
+   return false;
+   }
+   
+   
+   
    public void playSong() throws BasicPlayerException, IOException {
        
      
@@ -353,49 +375,54 @@ public class App extends JFrame implements ActionListener{
 
        String title = (String)table.getValueAt(CurrentSelectedRow, 1);
       if (title != null) {
+          String directory = null;
+          File f = null;
+        if (!isSongPaused()  && currentTitlePlaying != title) {
+            
        if (title.equalsIgnoreCase("Stronger")) {
-           String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
-
-            File f = new File(dir);
+           directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
+           
+            f = new File(directory);
             player.open(f);
             player.play();
             System.out.println("Playing this song");
-
 
        }
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
+        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
         
-        File arg = new File(dir);
+        f = new File(directory);
 
-        player.open(arg);
+        player.open(f);
         player.play();
         System.out.println("Playing this song");
+
        
        }
        
        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
+        directory  = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
         
-        File arg = new File(dir);
+         f= new File(directory);
 
-        player.open(arg);
+        player.open(f);
         player.play();
         System.out.println("Playing this song");
+
      
        }
        
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
+        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
         
-        File arg = new File(dir);
+        f = new File(directory);
 
-        player.open(arg);
+        player.open(f);
         player.play();
         System.out.println("Playing this song");
      
@@ -403,15 +430,22 @@ public class App extends JFrame implements ActionListener{
         }
        else if (title.equalsIgnoreCase("Whatta Man")){
         
-        String dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
+       directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
         
-        File arg = new File(dir);
+        File arg = new File(directory);
 
         player.open(arg);
         player.play();
         System.out.println("Playing this song");
-    
+
        }
+        
+      }
+        
+        else {
+        
+                player.resume();
+        }
       
    }
       
@@ -470,6 +504,14 @@ public class App extends JFrame implements ActionListener{
         String title = (String)table.getValueAt(CurrentSelectedRow, 1);
       
        if (title != null){
+           
+        if (isSongPaused()) {
+            
+            player.resume();
+        
+        }
+        
+        else  {
            
        if (title.equalsIgnoreCase("Stronger")) {
             dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
@@ -531,6 +573,10 @@ public class App extends JFrame implements ActionListener{
         System.out.println("Playing this song");
     
        }
+        
+       }
+        
+        
     }
        
        else {
