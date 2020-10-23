@@ -377,6 +377,7 @@ public class App extends JFrame implements ActionListener{
       if (title != null) {
           String directory = null;
           File f = null;
+          System.out.println("This is the current track " + currentTitlePlaying);
         if (!isSongPaused()  && currentTitlePlaying != title) {
             
        if (title.equalsIgnoreCase("Stronger")) {
@@ -399,6 +400,7 @@ public class App extends JFrame implements ActionListener{
         player.play();
         System.out.println("Playing this song");
 
+
        
        }
        
@@ -411,8 +413,6 @@ public class App extends JFrame implements ActionListener{
         player.open(f);
         player.play();
         System.out.println("Playing this song");
-
-     
        }
        
         else if (title.equalsIgnoreCase("Eyes like sky")) {
@@ -425,9 +425,8 @@ public class App extends JFrame implements ActionListener{
         player.open(f);
         player.play();
         System.out.println("Playing this song");
-     
-   
         }
+        
        else if (title.equalsIgnoreCase("Whatta Man")){
         
        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
@@ -439,14 +438,18 @@ public class App extends JFrame implements ActionListener{
         System.out.println("Playing this song");
 
        }
+
         
       }
+
         
         else {
         
                 player.resume();
+                title = (String)table.getValueAt(CurrentSelectedRow, 1);
+
         }
-      
+
    }
       
       else {
@@ -627,6 +630,9 @@ public class App extends JFrame implements ActionListener{
         else if (choice.equals("Play")) {
                  try {
                      playSong();
+                     System.out.println("Finally out of the function !");
+                     currentTitlePlaying =  (String)table.getValueAt(CurrentSelectedRow, 1);
+                     
                  } catch (BasicPlayerException ex) {
                      Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                  } catch (IOException ex) {
