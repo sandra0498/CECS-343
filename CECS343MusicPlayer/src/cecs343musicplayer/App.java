@@ -79,7 +79,7 @@ public class App extends JFrame implements ActionListener{
     JButton PauseButton; // pause button
     JButton PreviousButton; // previous song
     JButton NextButton; // next song
-    JButton StopButton; //
+    JButton StopButton; // to stop the song 
     
   
     JPanel main;
