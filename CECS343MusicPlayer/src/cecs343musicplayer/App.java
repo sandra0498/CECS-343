@@ -367,8 +367,6 @@ public class App extends JFrame implements ActionListener{
    
    
    public void playSong() throws BasicPlayerException, IOException {
-       
-     
 //   File arg = null;
 //   String dir = null;
    CurrentSelectedRow = table.getSelectedRow();
@@ -446,7 +444,7 @@ public class App extends JFrame implements ActionListener{
         else {
         
                 player.resume();
-                title = (String)table.getValueAt(CurrentSelectedRow, 1);
+                // title = (String)table.getValueAt(CurrentSelectedRow, 1);
 
         }
 
