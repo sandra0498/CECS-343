@@ -694,6 +694,6 @@ public class App extends JFrame implements ActionListener{
         }
      
        
-        } // end actionPerformed     
+        } /   
     }
     
