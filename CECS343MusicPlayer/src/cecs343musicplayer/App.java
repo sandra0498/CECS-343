@@ -380,7 +380,7 @@ public class App extends JFrame implements ActionListener{
           String directory = null;
           File f = null;
           System.out.println("This is the current track " + currentTitlePlaying);
-        if (!isSongPaused()  && currentTitlePlaying != title) {
+        if (!isSongPaused()  || currentTitlePlaying != title) {
             
        if (title.equalsIgnoreCase("Stronger")) {
            directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
