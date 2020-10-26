@@ -147,7 +147,15 @@ public class App extends JFrame implements ActionListener{
         NextButton.addActionListener(this);
         NextButton.setPreferredSize(new Dimension(100, 25));
 
+<<<<<<< HEAD
 
+=======
+        StopButton = new JButton("Stop");
+        StopButton.addActionListener(this);
+        StopButton.setPreferredSize(new Dimension(100,25));
+
+       
+>>>>>>> 49a7acbf9e5cf4fd29a2bc7e4799daa1c672be67
         main = new JPanel();
 
 
@@ -682,6 +690,23 @@ public class App extends JFrame implements ActionListener{
 
         }
 
+<<<<<<< HEAD
+=======
+        else if (choice.equals("Stop")) {
+
+            try {
+                player.stop();
+            }
+            catch(BasicPlayerException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+
+
+        }
+            
+>>>>>>> 49a7acbf9e5cf4fd29a2bc7e4799daa1c672be67
         else if (choice.equals("|<")) {
             try {
                 skiptoprevious();
@@ -718,7 +743,14 @@ public class App extends JFrame implements ActionListener{
 
         }
 
+<<<<<<< HEAD
 
     } // end actionPerformed
 }
+=======
+     
+       
+        } /   
+    }
+>>>>>>> 49a7acbf9e5cf4fd29a2bc7e4799daa1c672be67
     
