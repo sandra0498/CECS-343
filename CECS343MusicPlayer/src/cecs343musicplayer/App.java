@@ -5,7 +5,6 @@
  */
 package cecs343musicplayer;
 
-
 import java.awt.*;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -370,103 +369,84 @@ public class App extends JFrame implements ActionListener{
    public void playSong() throws BasicPlayerException, IOException {
        
      
-  // File arg = null;
+//   File arg = null;
 //   String dir = null;
-  // CurrentSelectedRow = table.getSelectedRow(); //Disturbia
-       // currentTitle is the current song playing or the index
-       // title should be what the user presses
-       String title = (String)table.getValueAt(CurrentSelectedRow, 1); // Disturbia
-       //String currentTitlePlaying = (String)table.getValueAt(CurrentSelectedRow, 1);
-         //int titleValue = (int)table.getValueAt(CurrentSelectedRow, 1);
-       //int currentTitleValue = table.getSelectedRow();
-       
-       // if title's current selected row is not the selected row of current song, then 
-       
+   CurrentSelectedRow = table.getSelectedRow();
+
+       String title = (String)table.getValueAt(CurrentSelectedRow, 1);
       if (title != null) {
           String directory = null;
           File f = null;
-          System.out.println("This is the previous track " + currentTitlePlaying +" Title that was clicked (current): "+ title );
-
+          System.out.println("This is the current track " + currentTitlePlaying);
         if (!isSongPaused()  || currentTitlePlaying != title) {
-          
-            if (title.equalsIgnoreCase("Stronger")) { // turn back to title
-           directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
+            
+       if (title.equalsIgnoreCase("Stronger")) {
+           directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
            
             f = new File(directory);
             player.open(f);
             player.play();
-            System.out.println("Playing Stronger");
-          
+            System.out.println("Playing this song");
 
        }
-          
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
+        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
         
         f = new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this Disturbia");
-         
+        System.out.println("Playing this song");
+
 
        
        }
        
-        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
+       else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        directory  = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
+        directory  = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
         
          f= new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this 1 2 Step");
-       
+        System.out.println("Playing this song");
        }
        
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
+        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
         
         f = new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this eyes like sky");
-        
+        System.out.println("Playing this song");
         }
         
-         else if (title.equalsIgnoreCase("Whatta Man")){
+       else if (title.equalsIgnoreCase("Whatta Man")){
         
-       directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
+       directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
         
         File arg = new File(directory);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this whatta man");
-        
+        System.out.println("Playing this song");
 
        }
 
         
       }
-        
 
-          
+        
         else {
         
                 player.resume();
-                
-               //title = (String)table.getValueAt(CurrentSelectedRow, 1);
-               title = (String)table.getValueAt(CurrentSelectedRow, 1);
-               //title = currentTitlePlaying;
-               
-               
+                title = (String)table.getValueAt(CurrentSelectedRow, 1);
 
         }
 
@@ -475,7 +455,6 @@ public class App extends JFrame implements ActionListener{
       else {
       
       System.out.println("There is nothing to play!");
-     
       }
        
        
@@ -529,7 +508,7 @@ public class App extends JFrame implements ActionListener{
       
        if (title != null){
            
-        if (isSongPaused()) { // isSongPaused()
+        if (isSongPaused()) {
             
             player.resume();
         
@@ -538,31 +517,31 @@ public class App extends JFrame implements ActionListener{
         else  {
            
        if (title.equalsIgnoreCase("Stronger")) {
-            dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
+            dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
 
             File f = new File(dir);
             player.open(f);
             player.play();
-            System.out.println("Playing this stronger");
+            System.out.println("Playing this song");
 
 
        }
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this disturbia");
+        System.out.println("Playing this song");
        
        }
        
        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
         
         arg = new File(dir);
 
@@ -575,26 +554,26 @@ public class App extends JFrame implements ActionListener{
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this eyes like sky");
+        System.out.println("Playing this song");
      
    
         }
        
         else if (title.equalsIgnoreCase("Whatta Man")){
         
-        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
+        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this whatta man");
+        System.out.println("Playing this song");
     
        }
         
@@ -651,10 +630,8 @@ public class App extends JFrame implements ActionListener{
         else if (choice.equals("Play")) {
                  try {
                      playSong();
-                     currentTitlePlaying =  (String)table.getValueAt(CurrentSelectedRow, 1);
                      System.out.println("Finally out of the function !");
-                     
-                     
+                     currentTitlePlaying =  (String)table.getValueAt(CurrentSelectedRow, 1);
                      
                  } catch (BasicPlayerException ex) {
                      Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
@@ -719,6 +696,6 @@ public class App extends JFrame implements ActionListener{
         }
      
        
-        } // end actionPerformed     
+        }      
     }
     
