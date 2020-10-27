@@ -147,6 +147,9 @@ public class App extends JFrame implements ActionListener{
         NextButton.addActionListener(this);
         NextButton.setPreferredSize(new Dimension(100, 25));
         
+       StopButton = new JButton("Stop");
+       StopButton.addActionListener(this);
+       StopButton.setPreferredSize(new Dimension(100,25));
        
         main = new JPanel();
         
@@ -192,6 +195,7 @@ public class App extends JFrame implements ActionListener{
         main.add(PlayButton);
         main.add(PauseButton);
         main.add(NextButton);
+        main.add(StopButton);
         
         this.setTitle("DJ Play My Song!");
         this.add(main);
@@ -508,14 +512,6 @@ public class App extends JFrame implements ActionListener{
       
        if (title != null){
            
-        if (isSongPaused()) {
-            
-            player.resume();
-        
-        }
-        
-        else  {
-           
        if (title.equalsIgnoreCase("Stronger")) {
             dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
 
@@ -576,10 +572,7 @@ public class App extends JFrame implements ActionListener{
         System.out.println("Playing this song");
     
        }
-        
-       }
-        
-        
+           
     }
        
        else {
@@ -630,7 +623,7 @@ public class App extends JFrame implements ActionListener{
         else if (choice.equals("Play")) {
                  try {
                      playSong();
-                     System.out.println("Finally out of the function !");
+//                     System.out.println("Finally out of the function !");
                      currentTitlePlaying =  (String)table.getValueAt(CurrentSelectedRow, 1);
                      
                  } catch (BasicPlayerException ex) {
@@ -656,6 +649,21 @@ public class App extends JFrame implements ActionListener{
                   System.out.println("No song chosen");
                  
                  }
+        
+        }
+        
+        else if (choice.equals("Stop")) {
+            
+            try {
+             player.stop();
+            }
+            
+            catch(BasicPlayerException ex) {
+            
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+
+            }
+        
         
         }
             
@@ -694,8 +702,13 @@ public class App extends JFrame implements ActionListener{
                  }
         
         }
+            
+    
      
        
-        }      
+        }   
+        
+        
+        
     }
     
