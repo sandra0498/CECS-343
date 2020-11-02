@@ -30,18 +30,24 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
@@ -55,10 +61,10 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
-    BasicController BC;
 
     JTable table;
     JScrollPane scrollPane; 
+    JPanel libraryPanel;
     final JPopupMenu popup;
     JMenuItem addMenuSong;
     JMenuItem deleteMenuSong;
@@ -66,8 +72,12 @@ public class App extends JFrame implements ActionListener{
     JMenuItem song;
     JMenuItem deleted;
     JMenuItem open;
+    JMenuItem createPlayList;
     JMenuBar menuBar;
     JMenu menu;
+    
+    JTree tree;
+    JTree library;
     MyDB mydb;
     
     
@@ -81,7 +91,11 @@ public class App extends JFrame implements ActionListener{
     JButton NextButton; // next song
     JButton StopButton; //
     
-  
+    DefaultTreeModel model;
+    DefaultMutableTreeNode playlist;
+    DefaultMutableTreeNode newNode;
+    TreePath path;
+    
     JPanel main;
     final JFileChooser fc;
     
@@ -99,12 +113,13 @@ public class App extends JFrame implements ActionListener{
         deleted =new JMenuItem("Delete Song");
         open = new JMenuItem("Open Song");
         exit =new JMenuItem("Exit"); 
+        createPlayList = new JMenuItem("Create Playlist");
         
         menu.add(song);
         menu.add(deleted);
         menu.add(open);
         menu.add(exit);
-        
+        menu.add(createPlayList);
         menuBar.add(menu);
         
         open.addActionListener(this);
@@ -117,6 +132,8 @@ public class App extends JFrame implements ActionListener{
         
         deleted.addActionListener(this); 
         // adds delete in menu bar to listener 
+        
+        createPlayList.addActionListener(this);
         
         
         popup = new JPopupMenu();
@@ -151,6 +168,10 @@ public class App extends JFrame implements ActionListener{
        StopButton.addActionListener(this);
        StopButton.setPreferredSize(new Dimension(100,25));
        
+       libraryPanel = new JPanel(); // our library panel that will hold playlists
+//       libraryPanel.setLayout(new BoxLayout(libraryPanel, BoxLayout.Y_AXIS));
+//       libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+       
         main = new JPanel();
         
 
@@ -164,7 +185,13 @@ public class App extends JFrame implements ActionListener{
         //data holds the table data and maps as a 2d array into the table
         Object[][] data = mydb.getSongs();
         
-
+        DefaultMutableTreeNode libraryTree = new DefaultMutableTreeNode("Library"); 
+        // tree node for library
+        
+        playlist = new DefaultMutableTreeNode("Playlist");
+        DefaultMutableTreeNode createdList = new DefaultMutableTreeNode("Bach"); 
+        // new node when user creates a playlist
+        
         DefaultTableModel dm = new DefaultTableModel(data,columns);
                 
         //create the table
@@ -187,10 +214,22 @@ public class App extends JFrame implements ActionListener{
         
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(500,100));
+        libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        libraryPanel.setPreferredSize(new Dimension(80 , 200));
+        libraryPanel.setBackground(Color.WHITE);
         
+        
+       library = new JTree(libraryTree);
+       tree = new JTree(playlist); // this playlist is for when the user creates it
+       playlist.add(createdList);
+       
+       libraryPanel.add(library);
+       libraryPanel.add(tree);
+       
         main.setSize(700,500);
         
         main.add(scrollPane);
+        main.add(libraryPanel);
         main.add(PreviousButton);
         main.add(PlayButton);
         main.add(PauseButton);
@@ -700,6 +739,18 @@ public class App extends JFrame implements ActionListener{
                  catch(IllegalArgumentException ill) {
                  System.out.println("cannot skip ahead!");
                  }
+        
+        }
+            
+        else if (choice.equals("Create PlayList")) {
+            String playListOption = JOptionPane.showInputDialog(createPlayList,
+            "Playlist name: ", null);
+            
+            if(JOptionPane.OK_OPTION == 0){ // is true
+                newNode = new DefaultMutableTreeNode(playListOption);
+               playlist.add(newNode);
+            }
+        
         
         }
             
