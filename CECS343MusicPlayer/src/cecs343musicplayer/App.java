@@ -61,11 +61,14 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
-
+    
+    String userPlayList;
     JTable table;
     JScrollPane scrollPane; 
     JPanel libraryPanel;
     final JPopupMenu popup;
+    final JPopupMenu popupPlaylist;
+    
     JMenuItem addMenuSong;
     JMenuItem deleteMenuSong;
     JMenuItem exit;
@@ -73,8 +76,11 @@ public class App extends JFrame implements ActionListener{
     JMenuItem deleted;
     JMenuItem open;
     JMenuItem createPlayList;
+    JMenu addPlayListMenu;
     JMenuBar menuBar;
     JMenu menu;
+    JMenuItem deletePlaylist;
+    JMenuItem openNewWindow;
     
     JTree tree;
     JTree library;
@@ -94,6 +100,7 @@ public class App extends JFrame implements ActionListener{
     DefaultTreeModel model;
     DefaultMutableTreeNode playlist;
     DefaultMutableTreeNode newNode;
+    DefaultTableModel dm;
     TreePath path;
     
     JPanel main;
@@ -147,6 +154,23 @@ public class App extends JFrame implements ActionListener{
         
         deleteMenuSong.addActionListener(this);  // adds popup delete to listener
         
+        
+        
+        addPlayListMenu = new JMenu("Add to playlist"); // will have a submenu
+        //addPlayListMenu.add(new JMenuItem("Playlists..."));
+        // should be nodes created from user entered playlist
+        popup.add(addPlayListMenu);
+
+
+        popupPlaylist = new JPopupMenu();
+        openNewWindow = new JMenuItem("Open New Window");
+        deletePlaylist = new JMenuItem("Delete Playlist");
+        popupPlaylist.add(openNewWindow);
+        popupPlaylist.add(deletePlaylist);
+        openNewWindow.addActionListener(this); // create action listener to open in new window
+        deletePlaylist.addActionListener(this); // create action listener to delete playlist
+        
+        
         PreviousButton = new JButton("|<");
         PreviousButton.addActionListener(this);
         PreviousButton.setPreferredSize(new Dimension(100, 25));
@@ -189,17 +213,19 @@ public class App extends JFrame implements ActionListener{
         // tree node for library
         
         playlist = new DefaultMutableTreeNode("Playlist");
-        DefaultMutableTreeNode createdList = new DefaultMutableTreeNode("Bach"); 
+//        DefaultMutableTreeNode createdList = new DefaultMutableTreeNode("Bach"); 
         // new node when user creates a playlist
         
-        DefaultTableModel dm = new DefaultTableModel(data,columns);
+        dm = new DefaultTableModel(data,columns);
                 
         //create the table
         table = new JTable(dm);
+        tree = new JTree(playlist);
         
         // creating the pop up menu
         table.setComponentPopupMenu(popup);
         main.setComponentPopupMenu(popup); 
+        tree.setComponentPopupMenu(popupPlaylist);
         
         //assign the listener
         table.addMouseListener(mouseListener);
@@ -215,13 +241,13 @@ public class App extends JFrame implements ActionListener{
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(500,100));
         libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        libraryPanel.setPreferredSize(new Dimension(80 , 200));
+        libraryPanel.setPreferredSize(new Dimension(100 , 200));
         libraryPanel.setBackground(Color.WHITE);
         
         
        library = new JTree(libraryTree);
-       tree = new JTree(playlist); // this playlist is for when the user creates it
-       playlist.add(createdList);
+//       tree = new JTree(playlist); // this playlist is for when the user creates it
+//       playlist.add(createdList);
        
        libraryPanel.add(library);
        libraryPanel.add(tree);
@@ -743,15 +769,37 @@ public class App extends JFrame implements ActionListener{
         }
             
         else if (choice.equals("Create PlayList")) {
-            String playListOption = JOptionPane.showInputDialog(createPlayList,
-            "Playlist name: ", null);
+
+            userPlayList = JOptionPane.showInputDialog(createPlayList, "Playlist name: ");
             
             if(JOptionPane.OK_OPTION == 0){ // is true
-                newNode = new DefaultMutableTreeNode(playListOption);
+                newNode = new DefaultMutableTreeNode(userPlayList);
                playlist.add(newNode);
+               addPlayListMenu.add(new JMenuItem(userPlayList));
             }
         
         
+        }
+            
+        else if(choice.equals("Delete Playlist")){
+            model = (DefaultTreeModel) tree.getModel();
+            path = tree.getSelectionPath();
+            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            int confirmation = JOptionPane.showConfirmDialog(deletePlaylist,
+                    "Are you Sure you want to delete");
+
+            if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
+            model.removeNodeFromParent(currentNode);
+          }
+        }else if(choice.equals("Open New Window")){
+            table = new JTable(dm);
+            JFrame playListWindowFrame = new JFrame();
+            playListWindowFrame.setSize(400, 400);
+            playListWindowFrame.setTitle(userPlayList); // title is selected
+            playListWindowFrame.add(table);
+            //playListWindowFrame.add(); //opens an empty frame, may need for later
+            playListWindowFrame.setVisible(true);
+
         }
             
     
