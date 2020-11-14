@@ -5,6 +5,7 @@
  */
 package cecs343musicplayer;
 
+
 import java.awt.*;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -48,6 +49,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
@@ -61,14 +63,14 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
-    
+    BasicController BC;
+
     String userPlayList;
     JTable table;
     JScrollPane scrollPane; 
     JPanel libraryPanel;
     final JPopupMenu popup;
     final JPopupMenu popupPlaylist;
-    
     JMenuItem addMenuSong;
     JMenuItem deleteMenuSong;
     JMenuItem exit;
@@ -84,9 +86,8 @@ public class App extends JFrame implements ActionListener{
     
     JTree tree;
     JTree library;
+    
     MyDB mydb;
-    
-    
     
     int CurrentSelectedRow;
     String currentTitlePlaying; 
@@ -95,7 +96,7 @@ public class App extends JFrame implements ActionListener{
     JButton PauseButton; // pause button
     JButton PreviousButton; // previous song
     JButton NextButton; // next song
-    JButton StopButton; //
+    JButton StopButton; // stop button
     
     DefaultTreeModel model;
     DefaultMutableTreeNode playlist;
@@ -122,46 +123,36 @@ public class App extends JFrame implements ActionListener{
         exit =new JMenuItem("Exit"); 
         createPlayList = new JMenuItem("Create Playlist");
         
+        menuBar.add(menu);
         menu.add(song);
         menu.add(deleted);
         menu.add(open);
-        menu.add(exit);
         menu.add(createPlayList);
-        menuBar.add(menu);
+        menu.add(exit);
+        
         
         open.addActionListener(this);
-        
-        
-        song.addActionListener(this);
-        // ^^ adds the menu item to add song to action listener
-                                       
+        song.addActionListener(this); //  adds the menu item to add song to action listener                               
         exit.addActionListener(this); //adds exit button to listener 
+        deleted.addActionListener(this); // adds delete in menu bar to listener 
+        createPlayList.addActionListener(this); // when create playlist is selected
         
-        deleted.addActionListener(this); 
-        // adds delete in menu bar to listener 
-        
-        createPlayList.addActionListener(this);
         
         
         popup = new JPopupMenu();
         addMenuSong = new JMenuItem("Add Song"); // menu item add song
         deleteMenuSong = new JMenuItem("Delete Song"); // menu item delete song
-        
         popup.add(addMenuSong);
         popup.add(deleteMenuSong);
         
         addMenuSong.addActionListener(this);
-        
         deleteMenuSong.addActionListener(this);  // adds popup delete to listener
         
-        
-        
         addPlayListMenu = new JMenu("Add to playlist"); // will have a submenu
-        //addPlayListMenu.add(new JMenuItem("Playlists..."));
-        // should be nodes created from user entered playlist
+        //addPlayListMenu.add(new JMenuItem("Playlists...")); // should be nodes created from user entered playlist
         popup.add(addPlayListMenu);
-
-
+        
+        
         popupPlaylist = new JPopupMenu();
         openNewWindow = new JMenuItem("Open New Window");
         deletePlaylist = new JMenuItem("Delete Playlist");
@@ -169,7 +160,7 @@ public class App extends JFrame implements ActionListener{
         popupPlaylist.add(deletePlaylist);
         openNewWindow.addActionListener(this); // create action listener to open in new window
         deletePlaylist.addActionListener(this); // create action listener to delete playlist
-        
+       
         
         PreviousButton = new JButton("|<");
         PreviousButton.addActionListener(this);
@@ -188,15 +179,8 @@ public class App extends JFrame implements ActionListener{
         NextButton.addActionListener(this);
         NextButton.setPreferredSize(new Dimension(100, 25));
         
-       StopButton = new JButton("Stop");
-       StopButton.addActionListener(this);
-       StopButton.setPreferredSize(new Dimension(100,25));
-       
-       libraryPanel = new JPanel(); // our library panel that will hold playlists
-//       libraryPanel.setLayout(new BoxLayout(libraryPanel, BoxLayout.Y_AXIS));
-//       libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-       
-        main = new JPanel();
+        libraryPanel = new JPanel(); // our library panel that will hold playlists
+        main = new JPanel(); // our main jpanel
         
 
         
@@ -209,22 +193,18 @@ public class App extends JFrame implements ActionListener{
         //data holds the table data and maps as a 2d array into the table
         Object[][] data = mydb.getSongs();
         
-        DefaultMutableTreeNode libraryTree = new DefaultMutableTreeNode("Library"); 
-        // tree node for library
-        
-        playlist = new DefaultMutableTreeNode("Playlist");
-//        DefaultMutableTreeNode createdList = new DefaultMutableTreeNode("Bach"); 
-        // new node when user creates a playlist
-        
+        DefaultMutableTreeNode libraryTree = new DefaultMutableTreeNode("Library"); // tree node for library
+        playlist = new DefaultMutableTreeNode("Playlist"); // the root
+        //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
         dm = new DefaultTableModel(data,columns);
                 
         //create the table
         table = new JTable(dm);
-        tree = new JTree(playlist);
+        tree = new JTree(playlist); // this playlist is for when the user creates it
         
         // creating the pop up menu
-        table.setComponentPopupMenu(popup);
-        main.setComponentPopupMenu(popup); 
+        table.setComponentPopupMenu(popup); // taken out? 
+        main.setComponentPopupMenu(popup);
         tree.setComponentPopupMenu(popupPlaylist);
         
         //assign the listener
@@ -240,28 +220,26 @@ public class App extends JFrame implements ActionListener{
         
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(500,100));
-        libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        libraryPanel.setPreferredSize(new Dimension(100 , 200));
-        libraryPanel.setBackground(Color.WHITE);
-        
-        
+       
+       libraryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+       libraryPanel.setPreferredSize(new Dimension(100 , 200));
+       libraryPanel.setBackground(Color.WHITE);
+       
        library = new JTree(libraryTree);
-//       tree = new JTree(playlist); // this playlist is for when the user creates it
-//       playlist.add(createdList);
+       
        
        libraryPanel.add(library);
        libraryPanel.add(tree);
-       
-        main.setSize(700,500);
         
+        main.setSize(700,500);
+        main.add(libraryPanel); 
         main.add(scrollPane);
-        main.add(libraryPanel);
         main.add(PreviousButton);
         main.add(PlayButton);
         main.add(PauseButton);
         main.add(NextButton);
-        main.add(StopButton);
         
+          
         this.setTitle("DJ Play My Song!");
         this.add(main);
         this.setSize(500, 200);
@@ -438,85 +416,98 @@ public class App extends JFrame implements ActionListener{
    public void playSong() throws BasicPlayerException, IOException {
        
      
-//   File arg = null;
+  // File arg = null;
 //   String dir = null;
-   CurrentSelectedRow = table.getSelectedRow();
-
-       String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+  // CurrentSelectedRow = table.getSelectedRow(); //Disturbia
+       // currentTitle is the current song playing or the index
+       // title should be what the user presses
+       String title = (String)table.getValueAt(CurrentSelectedRow, 1); // Disturbia
+       //String currentTitlePlaying = (String)table.getValueAt(CurrentSelectedRow, 1);
+         //int titleValue = (int)table.getValueAt(CurrentSelectedRow, 1);
+       //int currentTitleValue = table.getSelectedRow();
+       
+       // if title's current selected row is not the selected row of current song, then 
+       
       if (title != null) {
           String directory = null;
           File f = null;
-          System.out.println("This is the current track " + currentTitlePlaying);
+          System.out.println("This is the previous track " + currentTitlePlaying +" Title that was clicked (current): "+ title );
+
         if (!isSongPaused()  || currentTitlePlaying != title) {
-            
-       if (title.equalsIgnoreCase("Stronger")) {
-           directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
+          
+            if (title.equalsIgnoreCase("Stronger")) { // turn back to title
+           directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
            
             f = new File(directory);
             player.open(f);
             player.play();
-            System.out.println("Playing this song");
+            System.out.println("Playing Stronger");
+          
 
        }
+          
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
+        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
         
         f = new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this song");
-
+        System.out.println("Playing this Disturbia");
+         
 
        
        }
        
-       else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
+        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        directory  = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
+        directory  = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
         
          f= new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this 1 2 Step");
+       
        }
        
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
+        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
         
         f = new File(directory);
 
         player.open(f);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this eyes like sky");
+        
         }
         
-       else if (title.equalsIgnoreCase("Whatta Man")){
+         else if (title.equalsIgnoreCase("Whatta Man")){
         
-       directory = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
+       directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
         
         File arg = new File(directory);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this whatta man");
+        
 
        }
 
         
       }
-
         
+
+          
         else {
         
                 player.resume();
-                title = (String)table.getValueAt(CurrentSelectedRow, 1);
-
+               title = (String)table.getValueAt(CurrentSelectedRow, 1);
         }
 
    }
@@ -524,6 +515,7 @@ public class App extends JFrame implements ActionListener{
       else {
       
       System.out.println("There is nothing to play!");
+     
       }
        
        
@@ -577,32 +569,34 @@ public class App extends JFrame implements ActionListener{
       
        if (title != null){
            
-       if (title.equalsIgnoreCase("Stronger")) {
-            dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Stronger.mp3";
+        
+            if (title.equalsIgnoreCase("Stronger")) {
+            dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
 
             File f = new File(dir);
             player.open(f);
             player.play();
-            System.out.println("Playing this song");
+            System.out.println("Playing this stronger");
 
 
        }
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/Disturbia.mp3";
+        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Disturbia.mp3";
+        
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this disturbia");
        
        }
        
        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/12step.mp3";
+        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/12step.mp3";
         
         arg = new File(dir);
 
@@ -615,30 +609,35 @@ public class App extends JFrame implements ActionListener{
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/eyeslikesky.mp3";
+        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/eyeslikesky.mp3";
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this eyes like sky");
      
    
         }
        
         else if (title.equalsIgnoreCase("Whatta Man")){
         
-        dir = "C:/Users/Sandra C/Desktop/FALL 2020/CECS 343/WhattaMan.mp3";
+        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/WhattaMan.mp3";
         
         arg = new File(dir);
 
         player.open(arg);
         player.play();
-        System.out.println("Playing this song");
+        System.out.println("Playing this whatta man");
     
        }
-           
-    }
+        
+         // end else
+        
+       
+        
+        
+    } // end title != null
        
        else {
        
@@ -688,8 +687,10 @@ public class App extends JFrame implements ActionListener{
         else if (choice.equals("Play")) {
                  try {
                      playSong();
-//                     System.out.println("Finally out of the function !");
                      currentTitlePlaying =  (String)table.getValueAt(CurrentSelectedRow, 1);
+                     System.out.println("Finally out of the function !");
+                     
+                     
                      
                  } catch (BasicPlayerException ex) {
                      Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
@@ -714,21 +715,6 @@ public class App extends JFrame implements ActionListener{
                   System.out.println("No song chosen");
                  
                  }
-        
-        }
-        
-        else if (choice.equals("Stop")) {
-            
-            try {
-             player.stop();
-            }
-            
-            catch(BasicPlayerException ex) {
-            
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-
-            }
-        
         
         }
             
@@ -766,28 +752,24 @@ public class App extends JFrame implements ActionListener{
                  System.out.println("cannot skip ahead!");
                  }
         
-        }
-            
-        else if (choice.equals("Create PlayList")) {
-
-            userPlayList = JOptionPane.showInputDialog(createPlayList, "Playlist name: ");
+        }else if(choice.equals("Create Playlist")){
+            userPlayList = JOptionPane.showInputDialog(createPlayList,
+                    "Playlist name: ");
             
             if(JOptionPane.OK_OPTION == 0){ // is true
-                newNode = new DefaultMutableTreeNode(userPlayList);
-               playlist.add(newNode);
-               addPlayListMenu.add(new JMenuItem(userPlayList));
+                newNode = new DefaultMutableTreeNode(userPlayList); // node is what user types in
+                playlist.add(newNode);
+                addPlayListMenu.add(new JMenuItem(userPlayList));
+                //tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
             }
-        
-        
-        }
             
-        else if(choice.equals("Delete Playlist")){
+            
+        }else if(choice.equals("Delete Playlist")){
             model = (DefaultTreeModel) tree.getModel();
             path = tree.getSelectionPath();
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-            int confirmation = JOptionPane.showConfirmDialog(deletePlaylist,
-                    "Are you Sure you want to delete");
-
+            int confirmation = JOptionPane.showConfirmDialog(deletePlaylist, "Are you Sure you want to delete");
+            
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
             model.removeNodeFromParent(currentNode);
           }
@@ -799,15 +781,8 @@ public class App extends JFrame implements ActionListener{
             playListWindowFrame.add(table);
             //playListWindowFrame.add(); //opens an empty frame, may need for later
             playListWindowFrame.setVisible(true);
-
-        }
-            
-    
      
+        }
        
-        }   
-        
-        
-        
+        } // end actionPerformed     
     }
-    
