@@ -63,7 +63,6 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 public class App extends JFrame implements ActionListener{
 
     BasicPlayer player;
-    BasicController BC;
 
     String userPlayList;
     JTable table;
@@ -436,7 +435,7 @@ public class App extends JFrame implements ActionListener{
         if (!isSongPaused()  || currentTitlePlaying != title) {
           
             if (title.equalsIgnoreCase("Stronger")) { // turn back to title
-           directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
+           directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Stronger.mp3";
            
             f = new File(directory);
             player.open(f);
@@ -449,7 +448,7 @@ public class App extends JFrame implements ActionListener{
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
+        directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Disturbia.mp3";
         
         f = new File(directory);
 
@@ -463,7 +462,7 @@ public class App extends JFrame implements ActionListener{
        
         else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        directory  = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
+        directory  = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/12step.mp3";
         
          f= new File(directory);
 
@@ -476,7 +475,7 @@ public class App extends JFrame implements ActionListener{
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
+        directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/eyeslikesky.mp3";
         
         f = new File(directory);
 
@@ -488,7 +487,7 @@ public class App extends JFrame implements ActionListener{
         
          else if (title.equalsIgnoreCase("Whatta Man")){
         
-       directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
+       directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/WhattaMan.mp3";
         
         File arg = new File(directory);
 
@@ -571,7 +570,7 @@ public class App extends JFrame implements ActionListener{
            
         
             if (title.equalsIgnoreCase("Stronger")) {
-            dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
+            dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Stronger.mp3";
 
             File f = new File(dir);
             player.open(f);
@@ -772,6 +771,9 @@ public class App extends JFrame implements ActionListener{
             
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
             model.removeNodeFromParent(currentNode);
+            int currentSelection = tree.getRowForPath(path);
+            addPlayListMenu.remove(addPlayListMenu.getItem(currentSelection + 1 ));
+            
           }
         }else if(choice.equals("Open New Window")){
             table = new JTable(dm);
