@@ -776,7 +776,7 @@ public class App extends JFrame implements ActionListener{
             
           }
         }else if(choice.equals("Open New Window")){
-            table = new JTable(dm);
+            JTable playlistTable = new JTable(dm);
             JFrame playListWindowFrame = new JFrame();
             JPanel playListPanel = new JPanel();
             playListWindowFrame.setSize(400, 400);
