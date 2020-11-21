@@ -778,12 +778,20 @@ public class App extends JFrame implements ActionListener{
         }else if(choice.equals("Open New Window")){
             table = new JTable(dm);
             JFrame playListWindowFrame = new JFrame();
+            JPanel playListPanel = new JPanel();
             playListWindowFrame.setSize(400, 400);
             playListWindowFrame.setTitle(userPlayList); // title is selected
             playListWindowFrame.add(table);
             //playListWindowFrame.add(); //opens an empty frame, may need for later
+            playListPanel.add(PreviousButton);
+            playListPanel.add(PlayButton);
+            playListPanel.add(NextButton);
+            playListPanel.add(PauseButton);
+            playListWindowFrame.add(playListPanel);
+//                JButton PreviousButton; // previous song
+//    JButton NextButton
             playListWindowFrame.setVisible(true);
-     
+            
         }
        
         } // end actionPerformed     
