@@ -129,6 +129,12 @@ public class MyDB {
        st.executeUpdate(playlistTable); 
    }
       
+    public void addPlayList(String name) {
+        if (!Playlists.contains(name)) {
+            Playlists.add(name);
+        }
+    }
+      
     public ArrayList<String> getPlaylists() {
         
         return Playlists;
