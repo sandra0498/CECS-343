@@ -115,30 +115,18 @@ public class MyDB {
    
    }
    
-      public void createPlaylistTable(String playlist) throws SQLException{
-      java.sql.Statement st = null;
-       st =  connection.createStatement();
-       String playlistTable=  "CREATE TABLE REGISTRATION " +
-                                "(Album VARCHAR(30), " +
-                                "Title VARCHAR(30)," +
-                                "Artist VARCHAR(30)," +
-                                "Year VARCHAR(30)," +
-                                "Genre VARCHAR(30),"+
-                                "Comments VARCHAR(30)," +
-                                "PRIMARY KEY (Title))";
-       st.executeUpdate(playlistTable); 
-   }
+   
       
-    public void addPlayList(String name) {
-        if (!Playlists.contains(name)) {
-            Playlists.add(name);
-        }
-    }
+    // public void addPlayList(String name) {
+    //     if (!Playlists.contains(name)) {
+    //         Playlists.add(name);
+    //     }
+    // }
       
-    public ArrayList<String> getPlaylists() {
+    // public ArrayList<String> getPlaylists() {
         
-        return Playlists;
-    }
+    //     return Playlists;
+    // }
    
    
   
