@@ -82,9 +82,43 @@ public class MyDB {
       return songs;
     }
    
-   public Object[][] getSongsFromPlaylist(String playlist) {
+   //accesses songs from a specific playlist 
+   public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
         Object songs[][] = null;
-        String stats = "";
+        String stats = "SELECT Album, Title, Artist, Year, Genre, Comments FROM playlist"
+                + "natural join tracks"
+                + "natural join userplaylist"
+                + "where playlistid = ?";
+        
+        statement = connection.prepareStatement(stats);
+        int ID = getPlaylistID(playlist);
+        statement.setInt(1, ID);
+        if (statement.execute(stats)) {
+        
+            ResultSet set = statement.getResultSet();
+            int j = 0;  
+            set.last();
+            int length = set.getRow();
+            set.beforeFirst();    
+            if (length > 0) {
+            
+                while(set.next()) {
+                    songs[j][0] = set.getString("Album");
+                    songs[j][1] = set.getString("Title");
+                    songs[j][2] = set.getString("Artist");
+                    songs[j][3] = set.getString("Year");
+                    songs[j][4] = set.getString("Genre");
+                    songs[j][5] = set.getString("Comments");
+                    j++;  
+                }
+            
+            }
+            
+            else {
+            
+                songs = new Object[0][6];
+            }
+        }
         return songs;
    }
    
@@ -93,7 +127,6 @@ public class MyDB {
        
        String stat = "INSERT INTO playlist(Album,Title,Artist,Year,Genre,Comments) Values(?,?,?,?,?,?)";
        PreparedStatement ps  = connection.prepareStatement(stat);
-       
        ps.setString(1,album);
        ps.setString(2, Title);
        ps.setString(3,Artist);
