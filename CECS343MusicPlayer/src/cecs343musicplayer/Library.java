@@ -60,12 +60,12 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
  * @author Sandra Chavez
  */
 
-public class App extends JFrame implements ActionListener{
+public class Library extends JFrame implements ActionListener{
 
     BasicPlayer player;
 
     String userPlayList;
-    JTable table;
+    private JTable table;
     JScrollPane scrollPane; 
     JPanel libraryPanel;
     final JPopupMenu popup;
@@ -106,7 +106,7 @@ public class App extends JFrame implements ActionListener{
     JPanel main;
     final JFileChooser fc;
     
-    public App() throws SQLException {
+    public Library() throws SQLException {
         mydb = new MyDB();
         mydb.Connect();
 
@@ -301,11 +301,11 @@ public class App extends JFrame implements ActionListener{
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (SQLException ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (UnsupportedTagException ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InvalidDataException ex) {
-                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 dtde.rejectDrop();
@@ -369,11 +369,11 @@ public class App extends JFrame implements ActionListener{
 
              
          } catch (IOException ex) {
-             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
          } catch (UnsupportedTagException ex) {
-             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
          } catch (InvalidDataException ex) {
-             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
          }
      }
     }
@@ -410,7 +410,9 @@ public class App extends JFrame implements ActionListener{
    return false;
    }
    
-   
+   public JTable getTable(){
+       return table;
+   }
    
    public void playSong() throws BasicPlayerException, IOException {
        
@@ -653,7 +655,7 @@ public class App extends JFrame implements ActionListener{
                  try {
                      addSong();
                  } catch (SQLException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                  catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("");
@@ -665,7 +667,7 @@ public class App extends JFrame implements ActionListener{
                   
                      deleteSong();
                  } catch (SQLException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                 catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("Nothing to delete, add songs first!");
@@ -677,9 +679,9 @@ public class App extends JFrame implements ActionListener{
                  try {
                      openSong();
                  } catch (BasicPlayerException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  } catch (IOException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
         
         }
@@ -692,9 +694,9 @@ public class App extends JFrame implements ActionListener{
                      
                      
                  } catch (BasicPlayerException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  } catch (IOException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                 catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("No song chosen");
@@ -708,7 +710,7 @@ public class App extends JFrame implements ActionListener{
                  try {
                      player.pause();
                  } catch (BasicPlayerException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                     catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("No song chosen");
@@ -721,9 +723,9 @@ public class App extends JFrame implements ActionListener{
                  try {
                      skiptoprevious();
                  } catch (BasicPlayerException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  } catch (IOException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                     catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("No song chosen");
@@ -739,9 +741,9 @@ public class App extends JFrame implements ActionListener{
                  try {
                      skiptonext();
                  } catch (BasicPlayerException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  } catch (IOException ex) {
-                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
                     catch (ArrayIndexOutOfBoundsException indexOut) {
                   System.out.println("No song chosen");
@@ -776,21 +778,35 @@ public class App extends JFrame implements ActionListener{
             
           }
         }else if(choice.equals("Open New Window")){
-            JTable playlistTable = new JTable(dm);
+            
+            table = new JTable(dm);
             JFrame playListWindowFrame = new JFrame();
             JPanel playListPanel = new JPanel();
             playListWindowFrame.setSize(400, 400);
             playListWindowFrame.setTitle(userPlayList); // title is selected
-            playListWindowFrame.add(table);
-            //playListWindowFrame.add(); //opens an empty frame, may need for later
-            playListPanel.add(PreviousButton);
-            playListPanel.add(PlayButton);
-            playListPanel.add(NextButton);
-            playListPanel.add(PauseButton);
+            playListWindowFrame.add(PreviousButton);
+            playListWindowFrame.add(PlayButton);
+            playListWindowFrame.add(NextButton);
+            playListWindowFrame.add(PauseButton);
+
             playListWindowFrame.add(playListPanel);
-//                JButton PreviousButton; // previous song
-//    JButton NextButton
-            playListWindowFrame.setVisible(true);
+            playListWindowFrame.add(new JScrollPane(table));
+            playListWindowFrame.setVisible(true); 
+//            JTable playlistTable = new JTable(dm);
+//            JFrame playListWindowFrame = new JFrame();
+//            JPanel playListPanel = new JPanel();
+//            playListWindowFrame.setSize(400, 400);
+//            playListWindowFrame.setTitle(userPlayList); // title is selected
+//            playListWindowFrame.add(table);
+//            //playListWindowFrame.add(); //opens an empty frame, may need for later
+//            playListPanel.add(PreviousButton);
+//            playListPanel.add(PlayButton);
+//            playListPanel.add(NextButton);
+//            playListPanel.add(PauseButton);
+//            playListWindowFrame.add(playListPanel);
+////                JButton PreviousButton; // previous song
+////    JButton NextButton
+//            playListWindowFrame.setVisible(true);
             
         }
        
