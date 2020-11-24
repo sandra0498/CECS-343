@@ -122,6 +122,7 @@ public class MyDB {
         return songs;
    }
    
+   //adds songs to the main library 
    public void addSongs(String album, String Title, String Artist, String Year, 
            String Genre, String Comments) throws SQLException {
        
@@ -148,6 +149,13 @@ public class MyDB {
       ps.setString(2, Title);
       ps.setString(3, Artist);
       ps.executeUpdate();
+   
+   
+   }
+   
+   //delete a specific song from a specific playlist
+   public void deleteSongFromPlaylist(String playlistname, String songname){
+   
    
    
    }
@@ -203,6 +211,15 @@ public class MyDB {
     
        }
 
+   
+   }
+   
+   //gets the song id given the title and artist 
+   public int getSongID(String songname, String artist) throws SQLException {
+       String stat = "SELECT songid FROM playlist where Title = ? and Artist = ?";
+       
+       statement = connection.prepareStatement(stat);
+       
    
    }
    
