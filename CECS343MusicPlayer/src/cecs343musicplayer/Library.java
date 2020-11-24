@@ -200,22 +200,16 @@ public class Library extends JFrame implements ActionListener{
         DefaultMutableTreeNode libraryTree = new DefaultMutableTreeNode("Library"); // tree node for library
         playlist = new DefaultMutableTreeNode("Playlist"); // the root
         playlistnames = mydb.getCurrentPlaylists();
-        if (playlistnames != null){
-            for(int i = 0; i < playlistnames.size(); i++){
-            newNode = new DefaultMutableTreeNode(playlistnames.get(i));
-            playlist.add(newNode);
-            addPlayListMenu.add(new JMenuItem(userPlayList));
+
+        for(int i = 0; i < playlistnames.size(); i++){
+        newNode = new DefaultMutableTreeNode(playlistnames.get(i));
+        playlist.add(newNode);
+        addPlayListMenu.add(new JMenuItem(userPlayList));
         
-        }
-        
- 
         }
 
-//        for (String playlistname : playlistnames) {
-//            newNode = new DefaultMutableTreeNode(playlistname);
-//            playlist.add(newNode);
-//            addPlayListMenu.add(new JMenuItem(userPlayList));
-//        }
+
+
 
         
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
