@@ -78,11 +78,15 @@ public class MyDB {
        
        songs = new Object[0][6];
        } 
-
-
      }
       return songs;
     }
+   
+   public Object[][] getSongsFromPlaylist(String playlist) {
+        Object songs[][] = null;
+        
+        return songs;
+   }
    
    public void addSongs(String album, String Title, String Artist, String Year, 
            String Genre, String Comments) throws SQLException {
@@ -116,19 +120,68 @@ public class MyDB {
    }
    
    
-      
-    // public void addPlayList(String name) {
-    //     if (!Playlists.contains(name)) {
-    //         Playlists.add(name);
-    //     }
-    // }
-      
-    // public ArrayList<String> getPlaylists() {
+   public ArrayList<String> getCurrentPlaylists() throws SQLException {
+       ArrayList<String> playlists = null;
+       
+        String stat = "SELECT playlistName from userplaylist";
+        statement = connection.prepareStatement(stat,ResultSet.TYPE_SCROLL_SENSITIVE, 
+        ResultSet.CONCUR_UPDATABLE);
+        if (statement.execute(stat)) {
+            ResultSet result = statement.getResultSet();
+       
+            int j = 0;
+
+             result.last();
+             int length = result.getRow();
+             result.beforeFirst();
+           if(length > 0 ) {
+                playlists = new ArrayList<>();
+                 while(result.next()){
+                  playlists.add(result.getString("playlistname"));
+                  j++;  
+                }  
         
-    //     return Playlists;
-    // }
+            }
+           
+        } 
+        return playlists;
+   }
+
+   public void addPlaylistName(String nameOfPlaylist) throws SQLException{
+      String stat = "INSERT INTO userplaylist(playlistName) Values(?)"; 
+      PreparedStatement ps  = connection.prepareStatement(stat); 
+      ps.setString(1,nameOfPlaylist);
+      ps.executeUpdate();
+   }
    
+   public void DeletePlaylist(String name) throws SQLException{
+       if (getPlaylistID(name) == 0) {
+       // does not exist in the table 
+       
+       }
+       else {
+           int Id = getPlaylistID(name);
+            String stat = "DELETE FROM userplaylist(playlistid) where playlistid = ? Values{?)";
+            PreparedStatement ps = connection.prepareStatement(stat);
+            ps.setInt(1, Id);
+            ps.executeUpdate();
+    
+       }
+
    
-  
+   }
+   
+   public int getPlaylistID(String playlistName) throws SQLException{
+       int playlistID = 0;
+       String stat = "SELECT playlistID FROM userplaylist WHERE playlistName = ?";  
+       PreparedStatement ps  = connection.prepareStatement(stat);
+       ps.setString(1, playlistName);
+       ResultSet resultSet = ps.executeQuery();
+       
+       while(resultSet.next()){
+          playlistID = resultSet.getInt("playlistid");
+       }
+       return playlistID;
+   }
    
 }
