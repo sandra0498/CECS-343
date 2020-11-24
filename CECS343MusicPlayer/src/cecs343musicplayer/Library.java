@@ -28,11 +28,14 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
+import javax.swing.DropMode;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -44,6 +47,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -63,9 +67,10 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 public class Library extends JFrame implements ActionListener{
 
     BasicPlayer player;
+    BasicController BC;
 
     String userPlayList;
-    private JTable table;
+    JTable table;
     JScrollPane scrollPane; 
     JPanel libraryPanel;
     final JPopupMenu popup;
@@ -102,7 +107,7 @@ public class Library extends JFrame implements ActionListener{
     DefaultMutableTreeNode newNode;
     DefaultTableModel dm;
     TreePath path;
-    
+    private ArrayList<String>playlistnames;
     JPanel main;
     final JFileChooser fc;
     
@@ -137,7 +142,7 @@ public class Library extends JFrame implements ActionListener{
         createPlayList.addActionListener(this); // when create playlist is selected
         
         
-        
+        library = new JTree();
         popup = new JPopupMenu();
         addMenuSong = new JMenuItem("Add Song"); // menu item add song
         deleteMenuSong = new JMenuItem("Delete Song"); // menu item delete song
@@ -181,7 +186,7 @@ public class Library extends JFrame implements ActionListener{
         libraryPanel = new JPanel(); // our library panel that will hold playlists
         main = new JPanel(); // our main jpanel
         
-
+        
         
         //colums labels the columns in the table
         //if the table is not in a scrollpane the column header will not show
@@ -194,12 +199,32 @@ public class Library extends JFrame implements ActionListener{
         
         DefaultMutableTreeNode libraryTree = new DefaultMutableTreeNode("Library"); // tree node for library
         playlist = new DefaultMutableTreeNode("Playlist"); // the root
+        playlistnames = mydb.getCurrentPlaylists();
+        if (playlistnames != null){
+            for(int i = 0; i < playlistnames.size(); i++){
+            newNode = new DefaultMutableTreeNode(playlistnames.get(i));
+            playlist.add(newNode);
+            addPlayListMenu.add(new JMenuItem(userPlayList));
+        
+        }
+        
+ 
+        }
+
+//        for (String playlistname : playlistnames) {
+//            newNode = new DefaultMutableTreeNode(playlistname);
+//            playlist.add(newNode);
+//            addPlayListMenu.add(new JMenuItem(userPlayList));
+//        }
+
+        
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
         dm = new DefaultTableModel(data,columns);
                 
         //create the table
         table = new JTable(dm);
         tree = new JTree(playlist); // this playlist is for when the user creates it
+        library = new JTree(libraryTree);
         
         // creating the pop up menu
         table.setComponentPopupMenu(popup); // taken out? 
@@ -208,6 +233,7 @@ public class Library extends JFrame implements ActionListener{
         
         //assign the listener
         table.addMouseListener(mouseListener);
+         library.addMouseListener(mListener);
         //change some column's width
         //first get the column from the column model from the table
         //column 0 is the leftmost - make it 250 pixels
@@ -224,7 +250,7 @@ public class Library extends JFrame implements ActionListener{
        libraryPanel.setPreferredSize(new Dimension(100 , 200));
        libraryPanel.setBackground(Color.WHITE);
        
-       library = new JTree(libraryTree);
+      
        
        
        libraryPanel.add(library);
@@ -317,6 +343,9 @@ public class Library extends JFrame implements ActionListener{
         this.setSize(500, 200);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+    
+    
+   
         //embed the listener in the declaration
     MouseListener mouseListener = new MouseAdapter() {
         //this will print the selected row index when a user clicks the table
@@ -326,6 +355,28 @@ public class Library extends JFrame implements ActionListener{
         }
     };
     
+    MouseListener mListener = new MouseAdapter() {
+       public void mousePressed(MouseEvent e) {
+         
+          String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+           try {
+               dm.setDataVector(mydb.getSongs(), columns);
+           } catch (SQLException ex) {
+               Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+           }
+       }
+        
+    };
+    
+    public JPanel getLibraryPanel(){
+        return libraryPanel;
+    }
+    public DefaultTableModel getModel(){
+        return dm;
+       }
+    public JTable getTable(){
+        return table;
+    }
     
     //function to open and play a song that is not in the library 
    public void openSong() throws BasicPlayerException, IOException {
@@ -410,9 +461,7 @@ public class Library extends JFrame implements ActionListener{
    return false;
    }
    
-   public JTable getTable(){
-       return table;
-   }
+   
    
    public void playSong() throws BasicPlayerException, IOException {
        
@@ -437,7 +486,7 @@ public class Library extends JFrame implements ActionListener{
         if (!isSongPaused()  || currentTitlePlaying != title) {
           
             if (title.equalsIgnoreCase("Stronger")) { // turn back to title
-           directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Stronger.mp3";
+           directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
            
             f = new File(directory);
             player.open(f);
@@ -450,7 +499,7 @@ public class Library extends JFrame implements ActionListener{
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Disturbia.mp3";
+        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
         
         f = new File(directory);
 
@@ -464,7 +513,7 @@ public class Library extends JFrame implements ActionListener{
        
         else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        directory  = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/12step.mp3";
+        directory  = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
         
          f= new File(directory);
 
@@ -477,7 +526,7 @@ public class Library extends JFrame implements ActionListener{
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/eyeslikesky.mp3";
+        directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
         
         f = new File(directory);
 
@@ -489,7 +538,7 @@ public class Library extends JFrame implements ActionListener{
         
          else if (title.equalsIgnoreCase("Whatta Man")){
         
-       directory = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/WhattaMan.mp3";
+       directory = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
         
         File arg = new File(directory);
 
@@ -572,7 +621,7 @@ public class Library extends JFrame implements ActionListener{
            
         
             if (title.equalsIgnoreCase("Stronger")) {
-            dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Stronger.mp3";
+            dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Stronger.mp3";
 
             File f = new File(dir);
             player.open(f);
@@ -584,8 +633,7 @@ public class Library extends JFrame implements ActionListener{
        
        else if (title.equalsIgnoreCase("Disturbia")){
            System.out.println("goes into this conditional ");
-        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/Disturbia.mp3";
-        
+        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/Disturbia.mp3";
         
         arg = new File(dir);
 
@@ -597,7 +645,7 @@ public class Library extends JFrame implements ActionListener{
        
        else if (title.equalsIgnoreCase("1, 2 Step (ft. Missy Elliott)")) {
            
-        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/12step.mp3";
+        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/1 2step.mp3";
         
         arg = new File(dir);
 
@@ -610,7 +658,7 @@ public class Library extends JFrame implements ActionListener{
         else if (title.equalsIgnoreCase("Eyes like sky")) {
             
                
-        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/eyeslikesky.mp3";
+        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/eyeslikesky.mp3";
         
         arg = new File(dir);
 
@@ -623,7 +671,7 @@ public class Library extends JFrame implements ActionListener{
        
         else if (title.equalsIgnoreCase("Whatta Man")){
         
-        dir = "C:/Users/Sandra C/Desktop/Fall 2020/CECS 343/WhattaMan.mp3";
+        dir = "C:/Users/Seren/Desktop/CECS343MP3Songs/WhattaMan.mp3";
         
         arg = new File(dir);
 
@@ -757,56 +805,55 @@ public class Library extends JFrame implements ActionListener{
             userPlayList = JOptionPane.showInputDialog(createPlayList,
                     "Playlist name: ");
             
+            
             if(JOptionPane.OK_OPTION == 0){ // is true
                 newNode = new DefaultMutableTreeNode(userPlayList); // node is what user types in
                 playlist.add(newNode);
                 addPlayListMenu.add(new JMenuItem(userPlayList));
-                //tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+                try {
+                   Object [][] dataVector = new Object[0][6];
+                   String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+                    mydb.addPlaylistName(userPlayList);
+                     dm.setDataVector(dataVector, columns);
+                   
+                } catch (SQLException ex) {
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+                 
             
             
         }else if(choice.equals("Delete Playlist")){
             model = (DefaultTreeModel) tree.getModel();
             path = tree.getSelectionPath();
+            
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-            int confirmation = JOptionPane.showConfirmDialog(deletePlaylist, "Are you Sure you want to delete");
+            int confirmation = JOptionPane.showConfirmDialog(deletePlaylist, "Are you sure you want to delete?");
             
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
             model.removeNodeFromParent(currentNode);
-            int currentSelection = tree.getRowForPath(path);
-            addPlayListMenu.remove(addPlayListMenu.getItem(currentSelection + 1 ));
-            
+            addPlayListMenu.remove(new JMenuItem(userPlayList));
           }
-        }else if(choice.equals("Open New Window")){
             
-            table = new JTable(dm);
-            JFrame playListWindowFrame = new JFrame();
-            JPanel playListPanel = new JPanel();
-            playListWindowFrame.setSize(400, 400);
-            playListWindowFrame.setTitle(userPlayList); // title is selected
-            playListWindowFrame.add(PreviousButton);
-            playListWindowFrame.add(PlayButton);
-            playListWindowFrame.add(NextButton);
-            playListWindowFrame.add(PauseButton);
-
-            playListWindowFrame.add(playListPanel);
-            playListWindowFrame.add(new JScrollPane(table));
-            playListWindowFrame.setVisible(true); 
-//            JTable playlistTable = new JTable(dm);
-//            JFrame playListWindowFrame = new JFrame();
-//            JPanel playListPanel = new JPanel();
-//            playListWindowFrame.setSize(400, 400);
-//            playListWindowFrame.setTitle(userPlayList); // title is selected
-//            playListWindowFrame.add(table);
-//            //playListWindowFrame.add(); //opens an empty frame, may need for later
-//            playListPanel.add(PreviousButton);
-//            playListPanel.add(PlayButton);
-//            playListPanel.add(NextButton);
-//            playListPanel.add(PauseButton);
-//            playListWindowFrame.add(playListPanel);
-////                JButton PreviousButton; // previous song
-////    JButton NextButton
-//            playListWindowFrame.setVisible(true);
+        }else if(choice.equals("Open New Window")){
+           
+                 try {
+                     Playlist play = new Playlist();
+                     play.setTitle(userPlayList);
+                     Object [][] dataVector = new Object[0][6];
+                     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+                     dm.setDataVector(mydb.getSongs(), columns);
+                     play.getModel().setDataVector(dataVector, columns);
+                     play.getLibraryPanel().setVisible(false);
+                     
+                     
+                     
+                    
+                 } catch (SQLException ex) {
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+            
+          
             
         }
        
