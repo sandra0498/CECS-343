@@ -84,7 +84,7 @@ public class MyDB {
    
    public Object[][] getSongsFromPlaylist(String playlist) {
         Object songs[][] = null;
-        
+        String stats = "";
         return songs;
    }
    
@@ -121,11 +121,13 @@ public class MyDB {
    
    
    public ArrayList<String> getCurrentPlaylists() throws SQLException {
-       ArrayList<String> playlists = null;
+       ArrayList<String> playlists = new ArrayList<>();
        
         String stat = "SELECT playlistName from userplaylist";
         statement = connection.prepareStatement(stat,ResultSet.TYPE_SCROLL_SENSITIVE, 
         ResultSet.CONCUR_UPDATABLE);
+
+
         if (statement.execute(stat)) {
             ResultSet result = statement.getResultSet();
        
@@ -135,7 +137,6 @@ public class MyDB {
              int length = result.getRow();
              result.beforeFirst();
            if(length > 0 ) {
-                playlists = new ArrayList<>();
                  while(result.next()){
                   playlists.add(result.getString("playlistname"));
                   j++;  
@@ -143,7 +144,8 @@ public class MyDB {
         
             }
            
-        } 
+        }
+
         return playlists;
    }
 
