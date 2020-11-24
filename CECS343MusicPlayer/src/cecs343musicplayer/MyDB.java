@@ -216,11 +216,13 @@ public class MyDB {
    
    //gets the song id given the title and artist 
    public int getSongID(String songname, String artist) throws SQLException {
+       int songid = 0;
        String stat = "SELECT songid FROM playlist where Title = ? and Artist = ?";
        
        statement = connection.prepareStatement(stat);
        
-   
+       // still have to write code here 
+       return songid;
    }
    
    public int getPlaylistID(String playlistName) throws SQLException{
