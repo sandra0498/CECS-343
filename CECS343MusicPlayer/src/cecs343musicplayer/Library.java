@@ -45,9 +45,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -64,7 +67,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
  * @author Sandra Chavez
  */
 
-public class Library extends JFrame implements ActionListener{
+public class Library extends JFrame implements ActionListener, ChangeListener{
 
     BasicPlayer player;
     BasicController BC;
@@ -110,6 +113,7 @@ public class Library extends JFrame implements ActionListener{
     private ArrayList<String>playlistnames;
     JPanel main;
     final JFileChooser fc;
+    JSlider slider;
     
     public Library() throws SQLException {
         mydb = new MyDB();
@@ -118,7 +122,8 @@ public class Library extends JFrame implements ActionListener{
         player = new BasicPlayer();        
         fc = new JFileChooser();
 //        fc.setCurrentDirectory(new File("c:/Users/Sandra C/Desktop/CECS343"));
-        
+        BC = (BasicController) player;
+        slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 70);
         menuBar = new JMenuBar();
         menu = new JMenu("File");
         song =new JMenuItem("Add Song");
@@ -133,6 +138,13 @@ public class Library extends JFrame implements ActionListener{
         menu.add(open);
         menu.add(createPlayList);
         menu.add(exit);
+        
+        slider.setMinorTickSpacing(5);
+        slider.setMajorTickSpacing(20);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        
+        slider.addChangeListener( this);
         
         
         open.addActionListener(this);
@@ -209,9 +221,6 @@ public class Library extends JFrame implements ActionListener{
         }
 
 
-
-
-        
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
         dm = new DefaultTableModel(data,columns);
                 
@@ -257,6 +266,7 @@ public class Library extends JFrame implements ActionListener{
         main.add(PlayButton);
         main.add(PauseButton);
         main.add(NextButton);
+        main.add(slider);
         
           
         this.setTitle("DJ Play My Song!");
@@ -688,6 +698,23 @@ public class Library extends JFrame implements ActionListener{
        }
       
    }
+    
+    
+    public void stateChanged(ChangeEvent ev) {
+        System.out.println(slider.getValue());
+        try {
+
+        float newvolume = (float) slider.getValue() / 100; 
+        System.out.println(newvolume);
+        BC.setGain(newvolume);
+
+
+        } catch (BasicPlayerException ex) {
+            Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    
+    }
   
         public void actionPerformed(ActionEvent e)  {
              String choice = e.getActionCommand();
@@ -833,12 +860,14 @@ public class Library extends JFrame implements ActionListener{
            
                  try {
                      Playlist play = new Playlist();
+                    play.getLibraryPanel().setVisible(false);
+
+//                     System.out.println(mydb.getPlaylistID(userPlayList));
                      play.setTitle(userPlayList);
                      Object [][] dataVector = new Object[0][6];
                      String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-                     dm.setDataVector(mydb.getSongs(), columns);
+                     dm.setDataVector(dataVector, columns);
                      play.getModel().setDataVector(dataVector, columns);
-                     play.getLibraryPanel().setVisible(false);
                      
                      
                      
