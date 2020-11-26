@@ -203,7 +203,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         libraryPanel = new JPanel(); // our library panel that will hold playlists
         main = new JPanel(); // our main jpanel
         
-        
+        menuitems = new ArrayList<>();
         
         //colums labels the columns in the table
         //if the table is not in a scrollpane the column header will not show
@@ -224,6 +224,13 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         addPlayListMenu.add(new JMenuItem(playlistnames.get(i)));
         menuitems.add(new JMenuItem(playlistnames.get(i)));
         
+        }
+        
+        for(int i = 0; i < menuitems.size(); i++){
+            
+            System.out.println("Menu item: "+ menuitems.get(i).getText());
+            menuitems.get(i).addActionListener(this);
+            System.out.println("gets to this point");
         }
 
 
@@ -721,6 +728,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
   
         public void actionPerformed(ActionEvent e)  {
              String choice = e.getActionCommand();
+             System.out.println("goes inside the action performed");
             if(choice.equals("Exit")){
              System.exit(0);
         }else if(choice.equals("Add Song")){
@@ -894,12 +902,41 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
           
             
         }
+            System.out.println("gets to here");
+               for(JMenuItem jm : menuitems){
+                if (e.getSource() == jm){
+                    String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+                    String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+                    String album, year, genre, comments; 
+
+                    
+                    try {
+                        
+                        mydb.addSongstoplaylist(jm.getText(), title, artist);
+                        Playlist p = new Playlist();
+                        int selected = table.getSelectedRow();
+                           album = (String) table.getValueAt(CurrentSelectedRow, 0);
+                           year = (String) table.getValueAt(CurrentSelectedRow, 3);
+                           genre = (String) table.getValueAt(CurrentSelectedRow, 4);
+                           comments = (String) table.getValueAt(CurrentSelectedRow, 5);
+                           
+                        
+                
+                        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+                        model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+               
+               }
        
         }
         
         public void ExportRowsActionPerformed(ActionEvent evt) throws SQLException{
         TableModel model = table.getModel();
-        
+       
         int selected[] = table.getSelectedRows();
         
         Object[] rows = new Object[6];
