@@ -114,6 +114,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
     DefaultTableModel dm;
     TreePath path;
     private ArrayList<String>playlistnames;
+    private ArrayList<JMenuItem> menuitems;
     JPanel main;
     final JFileChooser fc;
     JSlider slider;
@@ -221,6 +222,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         newNode = new DefaultMutableTreeNode(playlistnames.get(i));
         playlist.add(newNode);
         addPlayListMenu.add(new JMenuItem(playlistnames.get(i)));
+        menuitems.add(new JMenuItem(playlistnames.get(i)));
         
         }
 
@@ -832,6 +834,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
                 newNode = new DefaultMutableTreeNode(userPlayList); // node is what user types in
                 playlist.add(newNode);
                 addPlayListMenu.add(new JMenuItem(userPlayList));
+                menuitems.add(new JMenuItem(userPlayList));
                 try {
                    Object [][] dataVector = new Object[0][6];
                    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
@@ -857,6 +860,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
             model.removeNodeFromParent(currentNode);
             userPlayList = (String) currentNode.getUserObject();
             addPlayListMenu.remove(new JMenuItem(userPlayList));
+            menuitems.remove(new JMenuItem(userPlayList));
 
 
                 try {
