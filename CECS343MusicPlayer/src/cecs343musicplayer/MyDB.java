@@ -141,6 +141,18 @@ public class MyDB {
             
    }
    
+   public void addSongstoplaylist(String playlist, String title, String artist) throws SQLException{
+   
+   int songid = getSongID(title, artist);
+   String stat = "INSERT INTO songs(playlistName, songid) VALUES(?,?)";
+   statement = connection.prepareStatement(stat);
+   
+   statement.setString(1, playlist);
+   statement.setInt(2, songid);
+   
+   statement.executeUpdate();
+   }
+   
    //deletes songs from the main library 
    public void deleteSongs(String Title, String Artist) throws SQLException {
    
