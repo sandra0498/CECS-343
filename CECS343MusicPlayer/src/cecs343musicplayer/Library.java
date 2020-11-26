@@ -480,16 +480,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
        // currentTitle is the current song playing or the index
        // title should be what the user presses
        String title = (String)table.getValueAt(CurrentSelectedRow, 1); // Disturbia
-//       String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
-//        try {
-//            System.out.println("This is the id "+ mydb.getSongID(title, artist));
-//            //String currentTitlePlaying = (String)table.getValueAt(CurrentSelectedRow, 1);
-//            //int titleValue = (int)table.getValueAt(CurrentSelectedRow, 1);
-//            //int currentTitleValue = table.getSelectedRow();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-       
+
        // if title's current selected row is not the selected row of current song, then 
        
       if (title != null) {
