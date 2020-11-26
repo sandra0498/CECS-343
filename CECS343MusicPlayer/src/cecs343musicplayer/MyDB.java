@@ -83,15 +83,16 @@ public class MyDB {
     }
    
    //accesses songs from a specific playlist 
-   public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
+   public Object[][] getSongsFromPlaylist(int ID) throws SQLException {
         Object songs[][] = null;
-        String stats = "SELECT Album, Title, Artist, Year, Genre, Comments FROM playlist"
-                + "natural join tracks"
-                + "natural join userplaylist"
-                + "where playlistid = ?";
+        String stats = "SELECT Album, Title, Artist, Year, Genre, Comments FROM playlist p "
+                + "join userplaylist up on up.songid = p.songid "
+                + "join tracks t on t.playlistid = up.playlistid "
+                + "where playlistid =?";
         
-        statement = connection.prepareStatement(stats);
-        int ID = getPlaylistID(playlist);
+        statement = connection.prepareStatement(stats,ResultSet.TYPE_SCROLL_SENSITIVE, 
+                        ResultSet.CONCUR_UPDATABLE);
+//        int ID = getPlaylistID(playlist);
         statement.setInt(1, ID);
         if (statement.execute(stats)) {
         
@@ -140,14 +141,17 @@ public class MyDB {
             
    }
    
-   public void deleteSongs(String album, String Title, String Artist) throws SQLException {
+   //deletes songs from the main library 
+   public void deleteSongs(String Title, String Artist) throws SQLException {
    
-   String stat = "DELETE FROM playlist where Album=? and Title=? and Artist=?";
+   int songid = getSongID(Title, Artist);
+   String stat = "DELETE FROM playlist where songid =?";
+//   String stat = "DELETE FROM playlist where Album=? and Title=? and Artist=?";
       PreparedStatement ps = connection.prepareStatement(stat);
-
-      ps.setString(1, album);
-      ps.setString(2, Title);
-      ps.setString(3, Artist);
+      ps.setInt(1, songid);
+//      ps.setString(1, album);
+//      ps.setString(2, Title);
+//      ps.setString(3, Artist);
       ps.executeUpdate();
    
    
@@ -164,7 +168,7 @@ public class MyDB {
    public ArrayList<String> getCurrentPlaylists() throws SQLException {
        ArrayList<String> playlists = new ArrayList<>();
        
-        String stat = "SELECT playlistName from userplaylist";
+        String stat = "SELECT playlistName from userplaylists";
         statement = connection.prepareStatement(stat,ResultSet.TYPE_SCROLL_SENSITIVE, 
         ResultSet.CONCUR_UPDATABLE);
 
@@ -182,34 +186,26 @@ public class MyDB {
                   playlists.add(result.getString("playlistname"));
                   j++;  
                 }  
-        
-            }
-           
+            } 
         }
 
         return playlists;
    }
 
    public void addPlaylistName(String nameOfPlaylist) throws SQLException{
-      String stat = "INSERT INTO userplaylist(playlistName) Values(?)"; 
+      String stat = "INSERT INTO userplaylists(playlistName) Values(?)"; 
       PreparedStatement ps  = connection.prepareStatement(stat); 
       ps.setString(1,nameOfPlaylist);
       ps.executeUpdate();
    }
    
    public void DeletePlaylist(String name) throws SQLException{
-       if (getPlaylistID(name) == 0) {
-       // does not exist in the table 
-       
-       }
-       else {
-           int Id = getPlaylistID(name);
-            String stat = "DELETE FROM userplaylist(playlistid) where playlistid = ? Values{?)";
-            PreparedStatement ps = connection.prepareStatement(stat);
-            ps.setInt(1, Id);
-            ps.executeUpdate();
-    
-       }
+
+         String stat = "DELETE FROM userplaylists where playlistName = ?";
+         PreparedStatement ps = connection.prepareStatement(stat);
+         ps.setString(1,name);
+         ps.executeUpdate();
+
 
    
    }
@@ -217,25 +213,41 @@ public class MyDB {
    //gets the song id given the title and artist 
    public int getSongID(String songname, String artist) throws SQLException {
        int songid = 0;
-       String stat = "SELECT songid FROM playlist where Title = ? and Artist = ?";
+       String name, artistname;
+       String stat = "SELECT * FROM playlist";
        
        statement = connection.prepareStatement(stat);
        
        // still have to write code here 
+       if (statement.execute(stat)) {
+       ResultSet rs = statement.getResultSet();
+        while(rs.next()){
+        name = rs.getString("Title");
+        artistname = rs.getString("Artist");
+            if(name.equals(songname) && artistname.equals(artist)) {
+                songid = rs.getInt("songid");
+
+            }
+        }
+       }
        return songid;
    }
-   
-   public int getPlaylistID(String playlistName) throws SQLException{
-       int playlistID = 0;
-       String stat = "SELECT playlistID FROM userplaylist WHERE playlistName = ?";  
-       PreparedStatement ps  = connection.prepareStatement(stat);
-       ps.setString(1, playlistName);
-       ResultSet resultSet = ps.executeQuery();
-       
-       while(resultSet.next()){
-          playlistID = resultSet.getInt("playlistid");
-       }
-       return playlistID;
-   }
+//   
+//   public int getPlaylistID(String playlistName) throws SQLException{
+//       int playlistID = 0;
+//       String stat = "SELECT playlistid FROM userplaylist WHERE playlistName =?";  
+//       statement  = connection.prepareStatement(stat);
+//       statement.setString(1, playlistName);
+////       ResultSet resultSet = ps.executeQuery();
+//       
+//       while(statement.execute(stat)) {
+//       
+//       ResultSet result = statement.getResultSet();
+//       playlistID = result.getInt("playlistid");
+//
+//       }
+//
+//       return playlistID;
+//   }
    
 }
