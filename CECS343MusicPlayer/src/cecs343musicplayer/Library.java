@@ -53,6 +53,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -90,6 +91,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
     JMenu menu;
     JMenuItem deletePlaylist;
     JMenuItem openNewWindow;
+    
+    JMenuItem childPlaylist;
     
     JTree tree;
     JTree library;
@@ -131,6 +134,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         open = new JMenuItem("Open Song");
         exit =new JMenuItem("Exit"); 
         createPlayList = new JMenuItem("Create Playlist");
+        
         
         menuBar.add(menu);
         menu.add(song);
@@ -216,7 +220,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         for(int i = 0; i < playlistnames.size(); i++){
         newNode = new DefaultMutableTreeNode(playlistnames.get(i));
         playlist.add(newNode);
-        addPlayListMenu.add(new JMenuItem(userPlayList));
+        addPlayListMenu.add(new JMenuItem(playlistnames.get(i)));
         
         }
 
@@ -438,11 +442,11 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
      //call the default table model .deleterow(SR)
     CurrentSelectedRow = table.getSelectedRow();
 
-     String album = (String)table.getValueAt(CurrentSelectedRow, 0);
+//     String album = (String)table.getValueAt(CurrentSelectedRow, 0);
      String title = (String)table.getValueAt(CurrentSelectedRow, 1);
      String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
      
-     mydb.deleteSongs(album,title,artist);
+     mydb.deleteSongs(title,artist);
     DefaultTableModel model = (DefaultTableModel) table.getModel();
     model.removeRow(CurrentSelectedRow);
    } 
@@ -476,9 +480,15 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
        // currentTitle is the current song playing or the index
        // title should be what the user presses
        String title = (String)table.getValueAt(CurrentSelectedRow, 1); // Disturbia
-       //String currentTitlePlaying = (String)table.getValueAt(CurrentSelectedRow, 1);
-         //int titleValue = (int)table.getValueAt(CurrentSelectedRow, 1);
-       //int currentTitleValue = table.getSelectedRow();
+//       String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+//        try {
+//            System.out.println("This is the id "+ mydb.getSongID(title, artist));
+//            //String currentTitlePlaying = (String)table.getValueAt(CurrentSelectedRow, 1);
+//            //int titleValue = (int)table.getValueAt(CurrentSelectedRow, 1);
+//            //int currentTitleValue = table.getSelectedRow();
+//        } catch (SQLException ex) {
+//            Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+//        }
        
        // if title's current selected row is not the selected row of current song, then 
        
@@ -849,11 +859,21 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
             path = tree.getSelectionPath();
             
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            
             int confirmation = JOptionPane.showConfirmDialog(deletePlaylist, "Are you sure you want to delete?");
             
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
             model.removeNodeFromParent(currentNode);
+            userPlayList = (String) currentNode.getUserObject();
             addPlayListMenu.remove(new JMenuItem(userPlayList));
+
+
+                try {
+                    mydb.DeletePlaylist(userPlayList);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            
           }
             
         }else if(choice.equals("Open New Window")){
@@ -880,5 +900,30 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
             
         }
        
-        } // end actionPerformed     
+        }
+        
+        public void ExportRowsActionPerformed(ActionEvent evt) throws SQLException{
+        TableModel model = table.getModel();
+        
+        int selected[] = table.getSelectedRows();
+        
+        Object[] rows = new Object[6];
+        Playlist p = new Playlist();
+        
+        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+        
+        for(int i = 0; i < selected.length; i++){
+            
+            rows[0] = model.getValueAt(selected[i], 0);
+            rows[1] = model.getValueAt(selected[i], 1);
+            rows[2] = model.getValueAt(selected[i], 2);
+            rows[3] = model.getValueAt(selected[i], 3);
+            rows[4] = model.getValueAt(selected[i], 4);
+            rows[5] = model.getValueAt(selected[i], 5);
+            
+            model2.addRow(rows);
+        }
+        
+        
+        }
     }
