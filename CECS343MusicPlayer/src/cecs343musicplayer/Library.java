@@ -51,6 +51,8 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -173,6 +175,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         //addPlayListMenu.add(new JMenuItem("Playlists...")); // should be nodes created from user entered playlist
         popup.add(addPlayListMenu);
         
+
         
         popupPlaylist = new JPopupMenu();
         openNewWindow = new JMenuItem("Open New Window");
@@ -226,12 +229,21 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         
         }
         
-        for(int i = 0; i < menuitems.size(); i++){
-            
-            System.out.println("Menu item: "+ menuitems.get(i).getText());
-            menuitems.get(i).addActionListener(this);
-            System.out.println("gets to this point");
-        }
+//        for(int i = 0; i < menuitems.size(); i++){
+//            
+//            System.out.println("Menu item: "+ menuitems.get(i).getText());
+//            JMenuItem item = menuitems.get(i);
+//            if(item.isSelected()){
+//                item.addActionListener(new ActionListener(){
+//                    
+//                    @Override
+//                    public void actionPerformed(ActionEvent e){
+//                    System.out.println("goes inside this new listener");
+//                    }
+//            });
+//            }
+//            System.out.println("gets to this point");
+//        }
 
 
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
@@ -250,6 +262,30 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         //assign the listener
         table.addMouseListener(mouseListener);
          library.addMouseListener(mListener);
+//        addPlayListMenu.addMouseListener();
+
+        addPlayListMenu.addMenuListener(new MenuListener(){
+            
+            @Override
+            public void menuSelected(MenuEvent m){
+                for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+                    JMenuItem item = addPlayListMenu.getItem(i);
+                
+                
+                }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent arg0) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent arg0) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        
         //change some column's width
         //first get the column from the column model from the table
         //column 0 is the leftmost - make it 250 pixels
@@ -383,6 +419,19 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
            }
        }
         
+    };
+    
+    MouseListener menuListener = new MouseAdapter() {
+        public void mousePressed(MouseEvent e){
+            for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+            
+            
+            }
+//                       addPlayListMenu.accessibleContext.ge
+//                    int index = Container.getComponentZOrder(addPlayListMenu);
+        
+        }
+    
     };
     
     public JPanel getLibraryPanel(){
@@ -842,7 +891,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
                 newNode = new DefaultMutableTreeNode(userPlayList); // node is what user types in
                 playlist.add(newNode);
                 addPlayListMenu.add(new JMenuItem(userPlayList));
-                menuitems.add(new JMenuItem(userPlayList));
+                menuitems.add(new JMenuItem(userPlayList)); //adding into arraylist 
                 try {
                    Object [][] dataVector = new Object[0][6];
                    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
@@ -902,7 +951,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
           
             
         }
-            System.out.println("gets to here");
+            System.out.println("gets to the for loop here");
                for(JMenuItem jm : menuitems){
                 if (e.getSource() == jm){
                     String title = (String)table.getValueAt(CurrentSelectedRow, 1);
