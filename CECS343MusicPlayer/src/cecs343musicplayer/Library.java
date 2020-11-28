@@ -255,31 +255,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         //assign the listener
         table.addMouseListener(mouseListener);
          library.addMouseListener(mListener);
-//        addPlayListMenu.addMouseListener();
 
-//        addPlayListMenu.addMenuListener(new MenuListener(){
-//            
-//            @Override
-//            public void menuSelected(MenuEvent m){
-//                for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
-//                    JMenuItem item = addPlayListMenu.getItem(i);
-//
-//                
-//                
-//                }
-//            }
-//
-//            @Override
-//            public void menuDeselected(MenuEvent arg0) {
-//                System.out.println("goes into the menu deselected");
-//            }
-//
-//            @Override
-//            public void menuCanceled(MenuEvent arg0) {
-////                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//        });
-        
         //change some column's width
         //first get the column from the column model from the table
         //column 0 is the leftmost - make it 250 pixels
@@ -898,7 +874,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                 addPlayListMenu.add(new JMenuItem(userPlayList));
                 menuitems.add(new JMenuItem(userPlayList)); //adding into arraylist 
                 try {
-                   Object [][] dataVector = new Object[0][6];
+                   Object [][] dataVector = new Object[1][6];
                    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
                     mydb.addPlaylistName(userPlayList);
                      dm.setDataVector(dataVector, columns);
@@ -940,8 +916,13 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                     play.getLibraryPanel().setVisible(false);
 
 //                     System.out.println(mydb.getPlaylistID(userPlayList));
+                    path = tree.getSelectionPath();
+            
+                    DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+                    userPlayList = (String) currentNode.getUserObject();
                      play.setTitle(userPlayList);
-                     Object [][] dataVector = new Object[0][6];
+                     System.out.println("This is the user playlist " + userPlayList);
+                     Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
                      String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
                      dm.setDataVector(dataVector, columns);
                      play.getModel().setDataVector(dataVector, columns);
