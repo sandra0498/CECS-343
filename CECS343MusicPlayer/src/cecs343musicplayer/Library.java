@@ -22,6 +22,9 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import static java.awt.event.ItemEvent.SELECTED;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -93,6 +97,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
     JMenu menu;
     JMenuItem deletePlaylist;
     JMenuItem openNewWindow;
+    
     
     JMenuItem childPlaylist;
     
@@ -229,21 +234,21 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         
         }
         
-//        for(int i = 0; i < menuitems.size(); i++){
-//            
-//            System.out.println("Menu item: "+ menuitems.get(i).getText());
-//            JMenuItem item = menuitems.get(i);
-//            if(item.isSelected()){
-//                item.addActionListener(new ActionListener(){
-//                    
-//                    @Override
-//                    public void actionPerformed(ActionEvent e){
-//                    System.out.println("goes inside this new listener");
-//                    }
-//            });
-//            }
-//            System.out.println("gets to this point");
-//        }
+        for(int i = 0; i < addPlayListMenu.getItemCount(); i++){
+            
+            System.out.println("Menu item: "+ menuitems.get(i).getText());
+            JMenuItem item = addPlayListMenu.getItem(i);
+            if(item.isSelected()){
+                item.addActionListener(new ActionListener(){
+                    
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                    System.out.println("goes inside this new listener");
+                    }
+            });
+            }
+
+        }
 
 
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
@@ -264,27 +269,28 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
          library.addMouseListener(mListener);
 //        addPlayListMenu.addMouseListener();
 
-        addPlayListMenu.addMenuListener(new MenuListener(){
-            
-            @Override
-            public void menuSelected(MenuEvent m){
-                for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
-                    JMenuItem item = addPlayListMenu.getItem(i);
-                
-                
-                }
-            }
-
-            @Override
-            public void menuDeselected(MenuEvent arg0) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent arg0) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
+//        addPlayListMenu.addMenuListener(new MenuListener(){
+//            
+//            @Override
+//            public void menuSelected(MenuEvent m){
+//                for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+//                    JMenuItem item = addPlayListMenu.getItem(i);
+//
+//                
+//                
+//                }
+//            }
+//
+//            @Override
+//            public void menuDeselected(MenuEvent arg0) {
+//                System.out.println("goes into the menu deselected");
+//            }
+//
+//            @Override
+//            public void menuCanceled(MenuEvent arg0) {
+////                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//        });
         
         //change some column's width
         //first get the column from the column model from the table
@@ -424,6 +430,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
     MouseListener menuListener = new MouseAdapter() {
         public void mousePressed(MouseEvent e){
             for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+                
             
             
             }
@@ -433,6 +440,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         }
     
     };
+
     
     public JPanel getLibraryPanel(){
         return libraryPanel;
@@ -457,6 +465,12 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
    
    
    } 
+   
+   
+   public void addtoPlaylist(String playlist) {
+   
+   
+   }
    public void addSong() throws SQLException{
      int returnValue = fc.showOpenDialog(this);
      
@@ -1007,4 +1021,19 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         
         
         }
+        
+        
+        
+        
+        private class MenuItemListener implements ItemListener {
+
+        @Override
+        public void itemStateChanged(ItemEvent arg0) {
+            System.out.println(arg0.getItemSelectable());
+
+        }
+
+
+
+}
     }
