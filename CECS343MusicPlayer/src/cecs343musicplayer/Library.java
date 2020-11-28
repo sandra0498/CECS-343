@@ -255,6 +255,9 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         //assign the listener
         table.addMouseListener(mouseListener);
          library.addMouseListener(mListener);
+         //maybe add a tree selection listener here to make it easier when picking the playlists in the tree
+         // so the table could change depending on the playlist we choose 
+         
 
         //change some column's width
         //first get the column from the column model from the table
@@ -394,19 +397,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
     };
     
-    MouseListener menuListener = new MouseAdapter() {
-        public void mousePressed(MouseEvent e){
-            for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
-                
-            
-            
-            }
-//                       addPlayListMenu.accessibleContext.ge
-//                    int index = Container.getComponentZOrder(addPlayListMenu);
-        
-        }
-    
-    };
+
 
     
     public JPanel getLibraryPanel(){
