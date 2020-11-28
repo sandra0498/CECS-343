@@ -82,44 +82,68 @@ public class MyDB {
       return songs;
     }
    
-   //accesses songs from a specific playlist 
-   public Object[][] getSongsFromPlaylist(int ID) throws SQLException {
-        Object songs[][] = null;
-        String stats = "SELECT Album, Title, Artist, Year, Genre, Comments FROM playlist p "
-                + "join userplaylist up on up.songid = p.songid "
-                + "join tracks t on t.playlistid = up.playlistid "
-                + "where playlistid =?";
+   //helper function for the getsongsfromplaylist
+   public ArrayList<Integer> SongRetriever(String playlist) throws SQLException{
+    ArrayList<Integer> songids = new ArrayList<>();
+    String stat = "SELECT * from songs";
+    PreparedStatement ps = connection.prepareStatement(stat);
+    if (ps.execute(stat)){
+        ResultSet set = ps.getResultSet();
         
-        statement = connection.prepareStatement(stats,ResultSet.TYPE_SCROLL_SENSITIVE, 
-                        ResultSet.CONCUR_UPDATABLE);
-//        int ID = getPlaylistID(playlist);
-        statement.setInt(1, ID);
-        if (statement.execute(stats)) {
-        
-            ResultSet set = statement.getResultSet();
-            int j = 0;  
-            set.last();
-            int length = set.getRow();
-            set.beforeFirst();    
-            if (length > 0) {
-            
-                while(set.next()) {
-                    songs[j][0] = set.getString("Album");
-                    songs[j][1] = set.getString("Title");
-                    songs[j][2] = set.getString("Artist");
-                    songs[j][3] = set.getString("Year");
-                    songs[j][4] = set.getString("Genre");
-                    songs[j][5] = set.getString("Comments");
-                    j++;  
-                }
-            
-            }
-            
-            else {
-            
-                songs = new Object[0][6];
+        while(set.next()){
+            String pl = set.getString("playlistName");
+            if(pl.equals(playlist)){
+                int id = set.getInt("songid");
+                songids.add(id);
             }
         }
+    }
+   
+   return songids;
+   
+   }
+   //accesses songs from a specific playlist 
+   public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
+        Object songs[][] = null;
+        
+        String stat = "SELECT * FROM playlist where songid =?";
+        statement = connection.prepareStatement(stat);
+        ArrayList<Integer> songids = SongRetriever(playlist);
+                //iterating through all the possible song ids 
+            for(int i : songids){
+            
+            statement.setInt(1, i);
+            if(statement.execute(stat)){
+            
+                // this result set has the songs with the specific ids 
+                ResultSet set = statement.getResultSet();
+                int j = 0;  
+                set.last();
+                int length = set.getRow();
+                set.beforeFirst();    
+                if (length > 0) {
+
+                    while(set.next()) {
+                        songs[j][0] = set.getString("Album");
+                        songs[j][1] = set.getString("Title");
+                        songs[j][2] = set.getString("Artist");
+                        songs[j][3] = set.getString("Year");
+                        songs[j][4] = set.getString("Genre");
+                        songs[j][5] = set.getString("Comments");
+                        j++;  
+                    }
+
+                }
+
+                else {
+
+                    songs = new Object[1][6];
+                }
+            }
+            
+            
+            }
+
         return songs;
    }
    
@@ -152,6 +176,8 @@ public class MyDB {
    
    statement.executeUpdate();
    }
+   
+   
    
    //deletes songs from the main library 
    public void deleteSongs(String Title, String Artist) throws SQLException {
@@ -244,22 +270,6 @@ public class MyDB {
        }
        return songid;
    }
-//   
-//   public int getPlaylistID(String playlistName) throws SQLException{
-//       int playlistID = 0;
-//       String stat = "SELECT playlistid FROM userplaylist WHERE playlistName =?";  
-//       statement  = connection.prepareStatement(stat);
-//       statement.setString(1, playlistName);
-////       ResultSet resultSet = ps.executeQuery();
-//       
-//       while(statement.execute(stat)) {
-//       
-//       ResultSet result = statement.getResultSet();
-//       playlistID = result.getInt("playlistid");
-//
-//       }
-//
-//       return playlistID;
-//   }
+
    
 }
