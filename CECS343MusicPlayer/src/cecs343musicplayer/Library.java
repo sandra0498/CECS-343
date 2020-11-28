@@ -57,6 +57,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -74,7 +76,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
  * @author Sandra Chavez
  */
 
-public class Library extends JFrame implements ActionListener, ChangeListener{
+public class Library extends JFrame implements ActionListener, ChangeListener, PopupMenuListener{
 
     BasicPlayer player;
     BasicController BC;
@@ -234,21 +236,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         
         }
         
-        for(int i = 0; i < addPlayListMenu.getItemCount(); i++){
-            
-            System.out.println("Menu item: "+ menuitems.get(i).getText());
-            JMenuItem item = addPlayListMenu.getItem(i);
-            if(item.isSelected()){
-                item.addActionListener(new ActionListener(){
-                    
-                    @Override
-                    public void actionPerformed(ActionEvent e){
-                    System.out.println("goes inside this new listener");
-                    }
-            });
-            }
 
-        }
 
 
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
@@ -401,6 +389,9 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         this.add(main);
         this.setSize(500, 200);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        
+        popup.addPopupMenuListener(this);
     }
     
     
@@ -965,36 +956,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
           
             
         }
-            System.out.println("gets to the for loop here");
-               for(JMenuItem jm : menuitems){
-                if (e.getSource() == jm){
-                    String title = (String)table.getValueAt(CurrentSelectedRow, 1);
-                    String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
-                    String album, year, genre, comments; 
-
-                    
-                    try {
-                        
-                        mydb.addSongstoplaylist(jm.getText(), title, artist);
-                        Playlist p = new Playlist();
-                        int selected = table.getSelectedRow();
-                           album = (String) table.getValueAt(CurrentSelectedRow, 0);
-                           year = (String) table.getValueAt(CurrentSelectedRow, 3);
-                           genre = (String) table.getValueAt(CurrentSelectedRow, 4);
-                           comments = (String) table.getValueAt(CurrentSelectedRow, 5);
-                           
-                        
-                
-                        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
-                        model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-               
-               }
-       
+            
         }
         
         public void ExportRowsActionPerformed(ActionEvent evt) throws SQLException{
@@ -1021,17 +983,63 @@ public class Library extends JFrame implements ActionListener, ChangeListener{
         
         
         }
+
+    @Override
+    public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
+        System.out.println("pop up menu will become visible");
+        System.out.println(arg0.getSource());
+        if(addPlayListMenu.getItem(0).isVisible()){
+            System.out.println("item is visible");
+            
+            for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+                
+                addPlayListMenu.getItem(i).addActionListener(new MenuItemListener());
+            }
+        }
+    }
+
+    @Override
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent arg0) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void popupMenuCanceled(PopupMenuEvent arg0) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
         
         
         
         
-        private class MenuItemListener implements ItemListener {
+        private class MenuItemListener implements ActionListener {
 
         @Override
-        public void itemStateChanged(ItemEvent arg0) {
-            System.out.println(arg0.getItemSelectable());
+        public void actionPerformed(ActionEvent arg0) {
+            
+            System.out.println("goes into the new class " + arg0.getActionCommand());
+            String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+            String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+            String album = (String) table.getValueAt(CurrentSelectedRow, 0);
+            String year = (String) table.getValueAt(CurrentSelectedRow, 3);
+            String genre = (String) table.getValueAt(CurrentSelectedRow, 4);
+            String comments = (String) table.getValueAt(CurrentSelectedRow, 5);
+            try {
+//                mydb.addSongstoplaylist(arg0.getActionCommand(), title, artist);
+                Playlist p = new Playlist();
+                DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+                model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
+            } catch (SQLException ex) {
+                Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
+            
+                                    
+
+            
+            
         }
+
+
 
 
 
