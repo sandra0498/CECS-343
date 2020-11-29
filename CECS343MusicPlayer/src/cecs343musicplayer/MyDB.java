@@ -106,32 +106,45 @@ public class MyDB {
    public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
         Object songs[][] = null;
         
-        String stat = "SELECT * FROM playlist where songid =?";
-        statement = connection.prepareStatement(stat);
+        String stat = "SELECT * FROM playlist";
+        statement = connection.prepareStatement(stat,ResultSet.TYPE_SCROLL_SENSITIVE, 
+                        ResultSet.CONCUR_UPDATABLE);
         ArrayList<Integer> songids = SongRetriever(playlist);
                 //iterating through all the possible song ids 
-            for(int i : songids){
-            
-            statement.setInt(1, i);
+  
             if(statement.execute(stat)){
             
                 // this result set has the songs with the specific ids 
                 ResultSet set = statement.getResultSet();
+                
                 int j = 0;  
                 set.last();
                 int length = set.getRow();
                 set.beforeFirst();    
                 if (length > 0) {
+                  for(int i : songids){
 
                     while(set.next()) {
-                        songs[j][0] = set.getString("Album");
-                        songs[j][1] = set.getString("Title");
-                        songs[j][2] = set.getString("Artist");
-                        songs[j][3] = set.getString("Year");
-                        songs[j][4] = set.getString("Genre");
-                        songs[j][5] = set.getString("Comments");
-                        j++;  
+                        int id = set.getInt("songid");
+                        //have to manually check since sql is giving problems
+                        if (id == i){
+                            
+                            songs[j][0] = set.getString("Album");
+                            songs[j][1] = set.getString("Title");
+                            songs[j][2] = set.getString("Artist");
+                            songs[j][3] = set.getString("Year");
+                            songs[j][4] = set.getString("Genre");
+                            songs[j][5] = set.getString("Comments");
+                            j++; 
+                     
+                        }
+ 
                     }
+                  
+                  
+                  
+                  
+                  }  
 
                 }
 
@@ -142,7 +155,7 @@ public class MyDB {
             }
             
             
-            }
+
 
         return songs;
    }
@@ -165,16 +178,25 @@ public class MyDB {
             
    }
    
+   //this function works 
+   //need to check for duplicates 
    public void addSongstoplaylist(String playlist, String title, String artist) throws SQLException{
    
    int songid = getSongID(title, artist);
-   String stat = "INSERT INTO songs(playlistName, songid) VALUES(?,?)";
-   statement = connection.prepareStatement(stat);
-   
-   statement.setString(1, playlist);
-   statement.setInt(2, songid);
-   
-   statement.executeUpdate();
+   ArrayList<Integer> songids = SongRetriever(playlist);
+   //this checks if its already in the database 
+    if (!songids.contains(songid)){
+         String stat = "INSERT INTO songs(playlistName, songid) VALUES(?,?)";
+         statement = connection.prepareStatement(stat);
+
+         statement.setString(1, playlist);
+         statement.setInt(2, songid);
+
+         statement.executeUpdate();   
+
+
+    }
+
    }
    
    
