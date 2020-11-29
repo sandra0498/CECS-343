@@ -378,6 +378,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         //embed the listener in the declaration
     MouseListener mouseListener = new MouseAdapter() {
         //this will print the selected row index when a user clicks the table
+        @Override
         public void mousePressed(MouseEvent e) {
            CurrentSelectedRow = table.getSelectedRow();
            System.out.println("Selected index = " + CurrentSelectedRow);
@@ -903,20 +904,18 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         }else if(choice.equals("Open New Window")){
            
                  try {
-                     Playlist play = new Playlist();
-                    play.getLibraryPanel().setVisible(false);
-
-//                     System.out.println(mydb.getPlaylistID(userPlayList));
                     path = tree.getSelectionPath();
             
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
                     userPlayList = (String) currentNode.getUserObject();
+                    Playlist play = new Playlist(userPlayList);
+                    play.getLibraryPanel().setVisible(false);
                      play.setTitle(userPlayList);
                      System.out.println("This is the user playlist " + userPlayList);
-                     Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
-                     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-                     dm.setDataVector(dataVector, columns);
-                     play.getModel().setDataVector(dataVector, columns);
+//                     Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
+//                     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+//                     dm.setDataVector(dataVector, columns);
+//                     play.getModel().setDataVector(dataVector, columns);
                      
                      
                      
@@ -937,9 +936,9 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         int selected[] = table.getSelectedRows();
         
         Object[] rows = new Object[6];
-        Playlist p = new Playlist();
-        
-        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+//        Playlist p = new Playlist();
+//        
+//        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
         
         for(int i = 0; i < selected.length; i++){
             
@@ -950,7 +949,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             rows[4] = model.getValueAt(selected[i], 4);
             rows[5] = model.getValueAt(selected[i], 5);
             
-            model2.addRow(rows);
+//            model2.addRow(rows);
         }
         
         
@@ -996,18 +995,21 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             String genre = (String) table.getValueAt(CurrentSelectedRow, 4);
             String comments = (String) table.getValueAt(CurrentSelectedRow, 5);
             try {
-//                mydb.addSongstoplaylist(arg0.getActionCommand(), title, artist);
-                Playlist p = new Playlist();
-                DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
-                model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
+                mydb.addSongstoplaylist(arg0.getActionCommand(), title, artist);
+//                Playlist p = new Playlist(arg0.getActionCommand());
+                Object [][] dataVector = mydb.getSongsFromPlaylist(arg0.getActionCommand());
+                String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"}; 
+//                p.getLibraryPanel().setVisible(false);
+                dm.setDataVector(dataVector, columns);
+                dm.insertRow(dm.getRowCount(), new Object[]{album, title, year, genre, comments});
+//                DefaultTableModel model2 = (DefaultTableModel) p.getModel();
+//                model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
             } catch (SQLException ex) {
                 Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             
-                                    
-
-            
+                                     
             
         }
 
