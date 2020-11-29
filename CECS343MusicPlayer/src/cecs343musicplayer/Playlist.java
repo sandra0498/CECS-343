@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
@@ -38,17 +40,28 @@ import javax.swing.table.DefaultTableModel;
 public class Playlist extends Library {
     DefaultTableModel tm;
     TransferHandler th;
-    private final DataFlavor localObjectFlavor = null;
-    private JComponent source;
-    private int[] indices;
-    String playlistname;
-    private int addIndex = -1; //Location where items were added
-    private int addCount; //Number of items added.
+    JTable playlist;
+    JPanel panel;
+    JFrame newframe;
+//    private final DataFlavor localObjectFlavor = null;
+//    private JComponent source;
+//    private int[] indices;
+//    String playlistname;
+//    private int addIndex = -1; //Location where items were added
+//    private int addCount; //Number of items added.
     
-    Playlist() throws SQLException{
+    Playlist(String playlistname) throws SQLException{
+        
     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
+//    Object[][] data = mydb.getSongsFromPlaylist(playlistname);
+    System.out.println("This is the playlist name "+ playlistname);
+    tm = new DefaultTableModel(new Object[0][6], columns);
+    playlist = new JTable(tm);
+    panel = new JPanel();
+
     
-    JTable playlist = new JTable();
+    
+    
     
     playlist.setDropTarget(new DropTarget() {
         @Override
@@ -116,16 +129,30 @@ public class Playlist extends Library {
         }
 
     });
-
+        panel.add(playlist);
+        this.add(panel);
+        
+        
+        this.setSize(500,200);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
+   
     }
             
 
 
     @Override
     public JTable getTable() {
-        return super.getTable(); //To change body of generated methods, choose Tools | Templates.
+        return playlist; //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    @Override
+       public DefaultTableModel getModel(){
+       
+            return tm;
+       }
     
     
     
