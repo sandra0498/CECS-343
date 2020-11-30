@@ -1023,7 +1023,14 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
 
             @Override
             public void valueChanged(TreeSelectionEvent arg0) {
-              System.out.println("library was selected");
+                System.out.println("library was selected");
+                 
+                String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+                 try {
+                     dm.setDataVector(mydb.getSongs(), columns);
+                 } catch (SQLException ex) {
+                     Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                 }
             }
         }
         
@@ -1032,6 +1039,20 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         @Override
         public void treeExpanded(TreeExpansionEvent arg0) {
             System.out.println("Tree expansion was detected ");
+                try {
+                    //need to fix this since it keeps displaying the playlist root node 
+                     path = tree.getSelectionPath();
+                    DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+                    userPlayList = (String) currentNode.getUserObject();
+                    System.out.println("This playlist was chosen " + userPlayList);
+                   Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
+                   String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+                    mydb.addPlaylistName(userPlayList);
+                     dm.setDataVector(dataVector, columns);
+                   
+                } catch (SQLException ex) {
+                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+                }
         }
 
         @Override
