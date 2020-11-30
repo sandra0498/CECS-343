@@ -59,6 +59,10 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -371,6 +375,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         
         popup.addPopupMenuListener(this);
+        library.addTreeSelectionListener(new LibraryListener());
+        tree.addTreeExpansionListener(new PlaylistListener());
     }
     
     
@@ -1008,16 +1014,32 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
 //                model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
             } catch (SQLException ex) {
                 Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }  
+        }
+        
+        
+    }
+        private class LibraryListener implements TreeSelectionListener{
 
-            
-                                     
-            
+            @Override
+            public void valueChanged(TreeSelectionEvent arg0) {
+              System.out.println("library was selected");
+            }
+        }
+        
+        private class PlaylistListener implements TreeExpansionListener {
+
+        @Override
+        public void treeExpanded(TreeExpansionEvent arg0) {
+            System.out.println("Tree expansion was detected ");
         }
 
-
-
-
-
-}
+        @Override
+        public void treeCollapsed(TreeExpansionEvent arg0) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+        
+        
+        }
     }
