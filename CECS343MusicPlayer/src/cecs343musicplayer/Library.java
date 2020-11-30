@@ -908,14 +908,16 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
                     userPlayList = (String) currentNode.getUserObject();
-                    Playlist play = new Playlist(userPlayList);
+                    Playlist play = new Playlist();
                     play.getLibraryPanel().setVisible(false);
                      play.setTitle(userPlayList);
                      System.out.println("This is the user playlist " + userPlayList);
-//                     Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
-//                     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-//                     dm.setDataVector(dataVector, columns);
-//                     play.getModel().setDataVector(dataVector, columns);
+                     Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
+                     String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+                     dm.setDataVector(dataVector, columns);
+                     play.getModel().setDataVector(dataVector, columns);
+                    
+                     
                      
                      
                      
