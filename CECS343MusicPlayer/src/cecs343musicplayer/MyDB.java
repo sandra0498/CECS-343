@@ -219,8 +219,14 @@ public class MyDB {
    }
    
    //delete a specific song from a specific playlist
-   public void deleteSongFromPlaylist(String playlistname, String songname){
-   
+   public void deleteSongFromPlaylist(String playlistname, String songname, String artist) throws SQLException{
+       int songid = getSongID(songname, artist);
+      String stat = "DELETE FROM songs where playlistName = ? and songid = ?";
+      statement = connection.prepareStatement(stat);
+      statement.setString(1, playlistname);
+      statement.setInt(2, songid);
+      statement.executeUpdate();
+      
    
    
    }
