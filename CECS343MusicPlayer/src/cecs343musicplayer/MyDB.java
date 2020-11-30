@@ -104,12 +104,13 @@ public class MyDB {
    }
    //accesses songs from a specific playlist 
    public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
-        Object songs[][] = null;
+        ArrayList<Integer> songids = SongRetriever(playlist);
+        Object songs[][] = new Object[songids.size()][6];
         
         String stat = "SELECT * FROM playlist";
         statement = connection.prepareStatement(stat,ResultSet.TYPE_SCROLL_SENSITIVE, 
                         ResultSet.CONCUR_UPDATABLE);
-        ArrayList<Integer> songids = SongRetriever(playlist);
+
                 //iterating through all the possible song ids 
   
             if(statement.execute(stat)){
