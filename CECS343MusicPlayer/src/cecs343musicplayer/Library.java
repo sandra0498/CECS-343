@@ -14,6 +14,7 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
@@ -368,6 +369,12 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         }
 
     });
+        table.setDragEnabled(true);
+//        Playlist p = new Playlist();
+//        p.table.setDropMode(DropMode.INSERT_ROWS);
+        table.setTransferHandler(new Transfer());
+        
+  
         this.add(main);
         this.setSize(500, 200);
         //changing this to DISPOSE_ON_CLOSE prevented the main frame being exited
@@ -377,7 +384,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         popup.addPopupMenuListener(this);
         library.addTreeSelectionListener(new LibraryListener());
-       tree.addTreeSelectionListener(this);
+        tree.addTreeSelectionListener(this);
 //        tree.addTreeExpansionListener(new PlaylistListener());
     }
     
@@ -902,7 +909,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
                     userPlayList = (String) currentNode.getUserObject();
-                    Playlist play = new Playlist(userPlayList);
+                    Playlist play = new Playlist();
                     play.getLibraryPanel().setVisible(false);
                      play.setTitle(userPlayList);
                      System.out.println("This is the user playlist " + userPlayList);
@@ -947,30 +954,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
 //        
 //        }
         
-        public void ExportRowsActionPerformed(ActionEvent evt) throws SQLException{
-        TableModel model = table.getModel();
-       
-        int selected[] = table.getSelectedRows();
-        
-        Object[] rows = new Object[6];
-//        Playlist p = new Playlist();
-//        
-//        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
-        
-        for(int i = 0; i < selected.length; i++){
-            
-            rows[0] = model.getValueAt(selected[i], 0);
-            rows[1] = model.getValueAt(selected[i], 1);
-            rows[2] = model.getValueAt(selected[i], 2);
-            rows[3] = model.getValueAt(selected[i], 3);
-            rows[4] = model.getValueAt(selected[i], 4);
-            rows[5] = model.getValueAt(selected[i], 5);
-            
-//            model2.addRow(rows);
-        }
-        
-        
-        }
+
 
     @Override
     public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
@@ -1056,7 +1040,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             String comments = (String) table.getValueAt(CurrentSelectedRow, 5);
             try {
                 mydb.addSongstoplaylist(arg0.getActionCommand(), title, artist);
-                Playlist p = new Playlist(arg0.getActionCommand());
+                Playlist p = new Playlist();
                 Object [][] dataVector = mydb.getSongsFromPlaylist(arg0.getActionCommand());
                 String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"}; 
                 p.getLibraryPanel().setVisible(false);
@@ -1097,6 +1081,68 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                      Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
             }
+        }
+        
+        
+        private class Transfer extends TransferHandler {
+        
+
+            @Override
+            public boolean canImport(TransferHandler.TransferSupport transferSupport){
+                return true;
+            }
+
+            @Override
+            public int getSourceActions(JComponent jComponent){
+              // int [] currentSelectRows = table.getSelectedRows();
+                return TransferHandler.COPY_OR_MOVE;
+            }
+            @Override
+            protected Transferable createTransferable(JComponent component){
+               return new StringSelection("Select");
+            }
+            @Override
+            public boolean importData(TransferSupport transferSupport){
+                if(transferSupport.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+                    
+                
+                    try {
+                        List<File> res = (List) transferSupport.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+
+                    } catch (Exception e) {
+                    }
+                }
+                return true;
+            }
+            
+                public Object[] ExportRowsActionPerformed(ActionEvent e) throws SQLException{
+                    TableModel model = table.getModel();
+
+                    int selected[] = table.getSelectedRows();
+
+                    Object[] rows = new Object[6];
+            //        Playlist p = new Playlist();
+            //        
+            //        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+
+                    for(int i = 0; i < selected.length; i++){
+
+                        rows[0] = model.getValueAt(selected[i], 0);
+                        rows[1] = model.getValueAt(selected[i], 1);
+                        rows[2] = model.getValueAt(selected[i], 2);
+                        rows[3] = model.getValueAt(selected[i], 3);
+                        rows[4] = model.getValueAt(selected[i], 4);
+                        rows[5] = model.getValueAt(selected[i], 5);
+
+            //            model2.addRow(rows);
+                    }
+                    
+                    return rows;
+
+
+                    }
+            
+        
         }
         
 
