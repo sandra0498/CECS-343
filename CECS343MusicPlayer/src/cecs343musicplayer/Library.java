@@ -258,7 +258,6 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         //assign the listener
         table.addMouseListener(mouseListener);
-         library.addMouseListener(mListener);
          //maybe add a tree selection listener here to make it easier when picking the playlists in the tree
          // so the table could change depending on the playlist we choose 
          
@@ -391,19 +390,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
            System.out.println("Selected index = " + CurrentSelectedRow);
         }
     };
-    
-    MouseListener mListener = new MouseAdapter() {
-       public void mousePressed(MouseEvent e) {
-         
-          String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-           try {
-               dm.setDataVector(mydb.getSongs(), columns);
-           } catch (SQLException ex) {
-               Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-           }
-       }
-        
-    };
+
     
 
 
