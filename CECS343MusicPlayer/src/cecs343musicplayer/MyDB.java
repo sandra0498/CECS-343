@@ -76,7 +76,7 @@ public class MyDB {
      }
        else {
        
-       songs = new Object[0][6];
+       songs = new Object[1][6];
        } 
      }
       return songs;
@@ -105,6 +105,7 @@ public class MyDB {
    //accesses songs from a specific playlist 
    public Object[][] getSongsFromPlaylist(String playlist) throws SQLException {
         ArrayList<Integer> songids = SongRetriever(playlist);
+        
         Object songs[][] = new Object[songids.size()][6];
         
         String stat = "SELECT * FROM playlist";
@@ -122,7 +123,7 @@ public class MyDB {
                 set.last();
                 int length = set.getRow();
                 set.beforeFirst();    
-                if (length > 0) {
+                if (length > 0 && songids.size() > 0) {
                   for(int i : songids){
 
                     while(set.next()) {
@@ -141,17 +142,14 @@ public class MyDB {
                         }
  
                     }
-                  
-                  
-                  
-                  
+           
                   }  
 
                 }
 
                 else {
 
-                    songs = new Object[1][6];
+                    songs = new Object[0][6];
                 }
             }
             
