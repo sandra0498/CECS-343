@@ -993,8 +993,15 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     public void valueChanged(TreeSelectionEvent event) {
         Object obj = event.getNewLeadSelectionPath().getLastPathComponent();
        DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-       if (node.isRoot()){
-       System.out.println("This is a root ");
+        String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
+
+       if (!node.isRoot()){
+            try {
+            dm.setDataVector(mydb.getSongsFromPlaylist(obj.toString()), columns);
+            }
+            catch (SQLException ex) {
+            Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+            }
        }
       System.out.println("" + obj.toString());
         treeModel = (DefaultTreeModel) tree.getModel();
