@@ -370,7 +370,9 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     });
         this.add(main);
         this.setSize(500, 200);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //changing this to DISPOSE_ON_CLOSE prevented the main frame being exited
+        //if we exited the child frame
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         
         popup.addPopupMenuListener(this);
@@ -902,7 +904,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
                     userPlayList = (String) currentNode.getUserObject();
-                    Playlist play = new Playlist();
+                    Playlist play = new Playlist(userPlayList);
                     play.getLibraryPanel().setVisible(false);
                      play.setTitle(userPlayList);
                      System.out.println("This is the user playlist " + userPlayList);
