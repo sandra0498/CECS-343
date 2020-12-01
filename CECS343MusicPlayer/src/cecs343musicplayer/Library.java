@@ -80,7 +80,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
  * @author Sandra Chavez
  */
 
-public class Library extends JFrame implements ActionListener, ChangeListener, PopupMenuListener{
+public class Library extends JFrame implements ActionListener, ChangeListener, PopupMenuListener, TreeSelectionListener{
 
     BasicPlayer player;
     BasicController BC;
@@ -121,7 +121,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     JButton NextButton; // next song
     JButton StopButton; // stop button
     
-    DefaultTreeModel model;
+    DefaultTreeModel treeModel;
     DefaultMutableTreeNode playlist;
     DefaultMutableTreeNode newNode;
     DefaultTableModel dm;
@@ -376,7 +376,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         popup.addPopupMenuListener(this);
         library.addTreeSelectionListener(new LibraryListener());
-        tree.addTreeExpansionListener(new PlaylistListener());
+        tree.addTreeSelectionListener(this);
+//        tree.addTreeExpansionListener(new PlaylistListener());
     }
     
     
@@ -885,7 +886,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
             
         }else if(choice.equals("Delete Playlist")){
-            model = (DefaultTreeModel) tree.getModel();
+            treeModel = (DefaultTreeModel) tree.getModel();
             path = tree.getSelectionPath();
             
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -893,7 +894,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             int confirmation = JOptionPane.showConfirmDialog(deletePlaylist, "Are you sure you want to delete?");
             
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
-            model.removeNodeFromParent(currentNode);
+            treeModel.removeNodeFromParent(currentNode);
             userPlayList = (String) currentNode.getUserObject();
             addPlayListMenu.remove(new JMenuItem(userPlayList));
             menuitems.remove(new JMenuItem(userPlayList));
@@ -986,6 +987,19 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     public void popupMenuCanceled(PopupMenuEvent arg0) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    // this is the method for TreeSelectionListener
+    @Override
+    public void valueChanged(TreeSelectionEvent event) {
+        Object obj = event.getNewLeadSelectionPath().getLastPathComponent();
+       DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+       if (node.isRoot()){
+       System.out.println("This is a root ");
+       }
+      System.out.println("" + obj.toString());
+        treeModel = (DefaultTreeModel) tree.getModel();
+
+    }
         
         
         
@@ -1033,34 +1047,6 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                  }
             }
         }
-        
-        private class PlaylistListener implements TreeExpansionListener {
 
-        @Override
-        public void treeExpanded(TreeExpansionEvent arg0) {
-            System.out.println("Tree expansion was detected ");
-                try {
-                    //need to fix this since it keeps displaying the playlist root node 
-                     path = tree.getSelectionPath();
-                    DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-                    userPlayList = (String) currentNode.getUserObject();
-                    System.out.println("This playlist was chosen " + userPlayList);
-                   Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
-                   String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-                    mydb.addPlaylistName(userPlayList);
-                     dm.setDataVector(dataVector, columns);
-                   
-                } catch (SQLException ex) {
-                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-                }
-        }
 
-        @Override
-        public void treeCollapsed(TreeExpansionEvent arg0) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
-        
-        
-        }
     }
