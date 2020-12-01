@@ -130,7 +130,14 @@ public class Playlist extends Library {
         }
 
     });
-           
+        
+//        
+//        newframe.add(panel);
+//        newframe.setSize(500,200);
+//        newframe.setVisible(true);
+//        newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
+   
     }
             
 
