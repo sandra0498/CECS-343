@@ -377,7 +377,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         popup.addPopupMenuListener(this);
         library.addTreeSelectionListener(new LibraryListener());
-        tree.addTreeSelectionListener(this);
+       tree.addTreeSelectionListener(this);
 //        tree.addTreeExpansionListener(new PlaylistListener());
     }
     
@@ -461,7 +461,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
      }
     }
    
-   public void deleteSong() throws SQLException {
+   public void deleteSong(DefaultTableModel m) throws SQLException {
      //get the selected row -->  (SR) 
      //call the default table model .deleterow(SR)
     CurrentSelectedRow = table.getSelectedRow();
@@ -471,8 +471,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
      String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
      
      mydb.deleteSongs(title,artist);
-    DefaultTableModel model = (DefaultTableModel) table.getModel();
-    model.removeRow(CurrentSelectedRow);
+//    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    m.removeRow(CurrentSelectedRow);
    } 
    
    
@@ -761,7 +761,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         else if (choice.equals("Delete Song")) {
                  try {
                   
-                     deleteSong();
+                     deleteSong((DefaultTableModel) table.getModel());
                  } catch (SQLException ex) {
                      Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
@@ -917,7 +917,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                      
                      
                      
-                    
+                
                  } catch (SQLException ex) {
                      Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
                  }
@@ -1022,11 +1022,24 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     
         }
 
-
-
     }
         
-       
+     public void addSongtoPlaylist(DefaultTableModel m){
+            String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+            String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+            String album = (String) table.getValueAt(CurrentSelectedRow, 0);
+            String year = (String) table.getValueAt(CurrentSelectedRow, 3);
+            String genre = (String) table.getValueAt(CurrentSelectedRow, 4);
+            String comments = (String) table.getValueAt(CurrentSelectedRow, 5);
+        if ( m.getRowCount() > 0) {
+
+            m.insertRow(m.getRowCount(), new Object[]{album, title,artist,year,genre,comments});
+            }
+        else{
+        m.addRow(new Object[]{album, title,artist,year,genre,comments});
+        }
+     
+     }  
         
         
         private class MenuItemListener implements ActionListener {
@@ -1043,21 +1056,34 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             String comments = (String) table.getValueAt(CurrentSelectedRow, 5);
             try {
                 mydb.addSongstoplaylist(arg0.getActionCommand(), title, artist);
-//                Playlist p = new Playlist(arg0.getActionCommand());
+                Playlist p = new Playlist(arg0.getActionCommand());
                 Object [][] dataVector = mydb.getSongsFromPlaylist(arg0.getActionCommand());
                 String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"}; 
-//                p.getLibraryPanel().setVisible(false);
+                p.getLibraryPanel().setVisible(false);
                 dm.setDataVector(dataVector, columns);
                 dm.insertRow(dm.getRowCount(), new Object[]{album, title,artist, year, genre, comments});
+                p.getModel().setDataVector(dataVector, columns);
+                DefaultTableModel m = p.getModel();
+                System.out.println("Row count in the playlist "+ m.getRowCount());
+                if (m.getRowCount() > 0) {
+                    m.insertRow(m.getRowCount() - 1, new Object[]{album, title,artist,year,genre,comments});
+                }
+                else {
+                
+                m.addRow(new Object[]{album, title,artist,year,genre,comments} );
+                }
+    
+//                p.getModel().setDataVector(dataVector, columns);
 //                DefaultTableModel model2 = (DefaultTableModel) p.getModel();
 //                model2.insertRow(model2.getRowCount(), new Object[]{album, title,year ,genre, comments});
             } catch (SQLException ex) {
                 Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
             }  
-        }
         
-        
+        }   
     }
+        
+        
         private class LibraryListener implements TreeSelectionListener{
 
             @Override
