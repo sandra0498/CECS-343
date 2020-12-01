@@ -130,14 +130,7 @@ public class Playlist extends Library {
         }
 
     });
-        
-//        
-//        newframe.add(panel);
-//        newframe.setSize(500,200);
-//        newframe.setVisible(true);
-//        newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
-   
+           
     }
             
 
@@ -157,8 +150,8 @@ public class Playlist extends Library {
     @Override // overrides the function from the main library 
     public void deleteSong() throws SQLException{
         CurrentSelectedRow = playlist.getSelectedRow();
-        String title = (String)table.getValueAt(CurrentSelectedRow, 1);
-        String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+        String title = (String)playlist.getValueAt(CurrentSelectedRow, 1);
+        String artist = (String)playlist.getValueAt(CurrentSelectedRow, 2);
         mydb.deleteSongFromPlaylist(userplaylist, title, artist);
         DefaultTableModel model = (DefaultTableModel) playlist.getModel();
         model.removeRow(CurrentSelectedRow);
