@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -38,7 +39,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Sandra C
  */
 public class Playlist extends Library {
-    DefaultTableModel tm;
+
     TransferHandler th;
     JTable playlist;
     private String userplaylist; 
@@ -52,10 +53,7 @@ public class Playlist extends Library {
     
     Playlist(String playlistname) throws SQLException{
         
-//    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
-////    Object[][] data = mydb.getSongsFromPlaylist(playlistname);
-//    System.out.println("This is the playlist name "+ playlistname);
-//    tm = new DefaultTableModel(new Object[0][6], columns);
+
     playlist = new JTable();
 
     this.userplaylist = playlistname;
@@ -64,78 +62,73 @@ public class Playlist extends Library {
     
     
     
-    playlist.setDropTarget(new DropTarget() {
-        @Override
-        public synchronized void dragOver(DropTargetDragEvent dtde) {
-            Point point = dtde.getLocation();
-            int row = table.rowAtPoint(point);
-            if (row < 0) {
-                table.clearSelection();
-            } else {
-                table.setRowSelectionInterval(row, row);
-            }
-            dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
-        }
-
-        @Override
-        public synchronized void drop(DropTargetDropEvent dtde) {
-            if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-                Transferable t = dtde.getTransferable();
-                List fileList = null;
-                try {
-                    fileList = (List)t.getTransferData(DataFlavor.javaFileListFlavor);
-                    int size = (int)fileList.size();
-                    if (size > 0) {
-                        playlist.clearSelection();
-                        Point point = dtde.getLocation();
-                        int row = playlist.rowAtPoint(point);
-                        DefaultTableModel model = (DefaultTableModel) playlist.getModel();
-                        for (Object value : fileList) {
-                             Mp3File mp3 = new Mp3File((File) value);
-                             ID3v2 id3v2Tag = mp3.getId3v2Tag();
-                             String album = id3v2Tag.getAlbum();
-                             String artist = id3v2Tag.getArtist();
-                             String title = id3v2Tag.getTitle();
-                             String year = id3v2Tag.getYear();
-                             String genre = id3v2Tag.getGenreDescription();
-                             String comments = id3v2Tag.getComment();
-                             mydb.addSongs(album, title, artist,year,genre,comments);
-                             System.out.println("This is the title "+title);
-                            if (value instanceof File) {
-                                File f = (File) value;
-                                if (row < 0) {
-                                    model.addRow(new Object[]{album, title,artist,year,genre,comments});
-                                } else {
-                                    model.insertRow(row, new Object[]{album, title,artist,year,genre,comments});
-                                    row++;
-                                }
-                            }
-                        }
-                    }
-                } catch (UnsupportedFlavorException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (UnsupportedTagException ex) {
-                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvalidDataException ex) {
-                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else {
-                dtde.rejectDrop();
-            }
-        }
-
-    });
-        
-//        
-//        newframe.add(panel);
-//        newframe.setSize(500,200);
-//        newframe.setVisible(true);
-//        newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    playlist.setDropTarget(new DropTarget() {
+//        @Override
+//        public synchronized void dragOver(DropTargetDragEvent dtde) {
+//            Point point = dtde.getLocation();
+//            int row = table.rowAtPoint(point);
+//            if (row < 0) {
+//                table.clearSelection();
+//            } else {
+//                table.setRowSelectionInterval(row, row);
+//            }
+//            dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+//        }
+//
+//        @Override
+//        public synchronized void drop(DropTargetDropEvent dtde) {
+//            if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+//                dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+//                Transferable t = dtde.getTransferable();
+//                List fileList = null;
+//                try {
+//                    fileList = (List)t.getTransferData(DataFlavor.javaFileListFlavor);
+//                    int size = (int)fileList.size();
+//                    if (size > 0) {
+//                        playlist.clearSelection();
+//                        Point point = dtde.getLocation();
+//                        int row = playlist.rowAtPoint(point);
+//                        DefaultTableModel model = (DefaultTableModel) playlist.getModel();
+//                        for (Object value : fileList) {
+//                             Mp3File mp3 = new Mp3File((File) value);
+//                             ID3v2 id3v2Tag = mp3.getId3v2Tag();
+//                             String album = id3v2Tag.getAlbum();
+//                             String artist = id3v2Tag.getArtist();
+//                             String title = id3v2Tag.getTitle();
+//                             String year = id3v2Tag.getYear();
+//                             String genre = id3v2Tag.getGenreDescription();
+//                             String comments = id3v2Tag.getComment();
+//                             mydb.addSongs(album, title, artist,year,genre,comments);
+//                             System.out.println("This is the title "+title);
+//                            if (value instanceof File) {
+//                                File f = (File) value;
+//                                if (row < 0) {
+//                                    model.addRow(new Object[]{album, title,artist,year,genre,comments});
+//                                } else {
+//                                    model.insertRow(row, new Object[]{album, title,artist,year,genre,comments});
+//                                    row++;
+//                                }
+//                            }
+//                        }
+//                    }
+//                } catch (UnsupportedFlavorException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (UnsupportedTagException ex) {
+//                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (InvalidDataException ex) {
+//                    Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            } else {
+//                dtde.rejectDrop();
+//            }
+//        }
+//
+//    });
+       
     
    
     }
@@ -147,15 +140,10 @@ public class Playlist extends Library {
         return playlist; //To change body of generated methods, choose Tools | Templates.
     }
     
-//    
-//    @Override
-//       public DefaultTableModel getModel(){
-//       
-//            return tm;
-//       }
-       
+
     @Override // overrides the function from the main library 
     public void deleteSong() throws SQLException{
+        System.out.println("goes into this overriden function");
         CurrentSelectedRow = playlist.getSelectedRow();
         String title = (String)playlist.getValueAt(CurrentSelectedRow, 1);
         String artist = (String)playlist.getValueAt(CurrentSelectedRow, 2);
@@ -164,7 +152,63 @@ public class Playlist extends Library {
         model.removeRow(CurrentSelectedRow);
         
     
-    }   
+    }
+    
+    
+    @Override
+    public void addSong(DefaultTableModel m) throws SQLException {
+    System.out.println("goes into the overriden add song method");
+    int returnValue = fc.showOpenDialog(this);
+     
+     if(returnValue == JFileChooser.APPROVE_OPTION) {
+           System.out.println("goes into this conditional");
+         try {
+
+            File file = fc.getSelectedFile();
+             Mp3File mp3 = new Mp3File(file);
+            ID3v2 id3v2Tag = mp3.getId3v2Tag();
+            String album = id3v2Tag.getAlbum();
+            String artist = id3v2Tag.getArtist();
+            String title = id3v2Tag.getTitle();
+            String year = id3v2Tag.getYear();
+            String genre = id3v2Tag.getGenreDescription();
+            String comments = id3v2Tag.getComment();
+            mydb.addSongstoplaylist(userplaylist, title, artist);
+            
+            ArrayList<Integer> amount = mydb.SongRetriever(userplaylist);
+            Object[][] data = mydb.getSongsFromPlaylist(userplaylist);
+            String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
+            System.out.println("Amount of songs in the playlist " + amount.size());
+//            DefaultTableModel model =  (DefaultTableModel) playlist.getModel();
+//            playlist = new JTable(model);
+            System.out.println("Number of rows in the model: " + m.getRowCount());
+            System.out.println("Number of rows in the table: " + playlist.getRowCount());
+            if (amount.size()> 0) {
+                System.out.println("goes inside the greater than 0");
+                System.out.println("Album: "+ album);
+                m.insertRow(m.getRowCount(), new Object[]{album, title,artist,year,genre,comments});
+            }
+            else{
+            m.addRow(new Object[]{album, title,artist,year,genre,comments});
+            }
+//            mydb.addSongstoplaylist(userplaylist, title, artist);
+
+            
+
+             
+         } catch (IOException ex) {
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (UnsupportedTagException ex) {
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (InvalidDataException ex) {
+             Logger.getLogger(Library.class.getName()).log(Level.SEVERE, null, ex);
+         }
+     }
+    
+    
+    }
+    
+    
 
     
     
