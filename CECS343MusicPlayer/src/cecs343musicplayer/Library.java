@@ -928,24 +928,24 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
         }
         
-        private class AddSongListener implements ActionListener {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                System.out.println(userPlayList);
-
-            }
-        
-        
-        
-        }
-        
-        public void addSongtoPlaylist(String playlist){
-        
-        
-        
-        }
+//        private class AddSongListener implements ActionListener {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                System.out.println(userPlayList);
+//
+//            }
+//        
+//        
+//        
+//        }
+//        
+//        public void addSongtoPlaylist(String playlist){
+//        
+//        
+//        
+//        }
         
         public void ExportRowsActionPerformed(ActionEvent evt) throws SQLException{
         TableModel model = table.getModel();
