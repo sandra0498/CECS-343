@@ -41,8 +41,8 @@ public class Playlist extends Library {
     DefaultTableModel tm;
     TransferHandler th;
     JTable playlist;
-    JPanel panel;
-    JFrame newframe;
+    private String userplaylist; 
+
 //    private final DataFlavor localObjectFlavor = null;
 //    private JComponent source;
 //    private int[] indices;
@@ -52,13 +52,14 @@ public class Playlist extends Library {
     
     Playlist(String playlistname) throws SQLException{
         
-    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
-//    Object[][] data = mydb.getSongsFromPlaylist(playlistname);
-    System.out.println("This is the playlist name "+ playlistname);
-    tm = new DefaultTableModel(new Object[0][6], columns);
-    playlist = new JTable(tm);
-    panel = new JPanel();
+//    String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};    
+////    Object[][] data = mydb.getSongsFromPlaylist(playlistname);
+//    System.out.println("This is the playlist name "+ playlistname);
+//    tm = new DefaultTableModel(new Object[0][6], columns);
+    playlist = new JTable();
 
+    this.userplaylist = playlistname;
+    System.out.println("playlist name: "+ userplaylist);
     
     
     
@@ -129,13 +130,12 @@ public class Playlist extends Library {
         }
 
     });
-        panel.add(playlist);
-        this.add(panel);
         
-        
-        this.setSize(500,200);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        
+//        newframe.add(panel);
+//        newframe.setSize(500,200);
+//        newframe.setVisible(true);
+//        newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
    
     }
@@ -147,12 +147,25 @@ public class Playlist extends Library {
         return playlist; //To change body of generated methods, choose Tools | Templates.
     }
     
-    
-    @Override
-       public DefaultTableModel getModel(){
+//    
+//    @Override
+//       public DefaultTableModel getModel(){
+//       
+//            return tm;
+//       }
        
-            return tm;
-       }
+    @Override // overrides the function from the main library 
+    public void deleteSong() throws SQLException{
+        CurrentSelectedRow = playlist.getSelectedRow();
+        String title = (String)table.getValueAt(CurrentSelectedRow, 1);
+        String artist = (String)table.getValueAt(CurrentSelectedRow, 2);
+        mydb.deleteSongFromPlaylist(userplaylist, title, artist);
+        DefaultTableModel model = (DefaultTableModel) playlist.getModel();
+        model.removeRow(CurrentSelectedRow);
+        
+    
+    }   
+
     
     
     
