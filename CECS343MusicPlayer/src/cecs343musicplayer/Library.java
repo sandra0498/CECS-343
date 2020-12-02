@@ -85,13 +85,14 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
 
     BasicPlayer player;
     BasicController BC;
-
+    
+    Playlist p; 
     String userPlayList;
     JTable table;
     JScrollPane scrollPane; 
     JPanel libraryPanel;
-    final JPopupMenu popup;
-    final JPopupMenu popupPlaylist;
+    JPopupMenu popup;
+    JPopupMenu popupPlaylist;
     JMenuItem addMenuSong;
     JMenuItem deleteMenuSong;
     JMenuItem exit;
@@ -240,6 +241,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         menuitems.add(new JMenuItem(playlistnames.get(i)));
         
         }
+        popup.addPopupMenuListener(this);
+
         
 
 
@@ -254,7 +257,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         // creating the pop up menu
         table.setComponentPopupMenu(popup); // taken out? 
-        main.setComponentPopupMenu(popup);
+//        main.setComponentPopupMenu(popup);
         tree.setComponentPopupMenu(popupPlaylist);
         
         //assign the listener
@@ -382,7 +385,6 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         
-        popup.addPopupMenuListener(this);
         library.addTreeSelectionListener(new LibraryListener());
         tree.addTreeSelectionListener(this);
 //        tree.addTreeExpansionListener(new PlaylistListener());
@@ -890,6 +892,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             if(confirmation == 0){ // 0 = yes, 1 = no, 2 = cancel
             treeModel.removeNodeFromParent(currentNode);
             userPlayList = (String) currentNode.getUserObject();
+            
             addPlayListMenu.remove(new JMenuItem(userPlayList));
             menuitems.remove(new JMenuItem(userPlayList));
 
@@ -915,8 +918,9 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                      System.out.println("This is the user playlist " + userPlayList);
                      Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
                      String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
-                     dm.setDataVector(dataVector, columns);
+//                     dm.setDataVector(dataVector, columns);
                      play.getModel().setDataVector(dataVector, columns);
+                     
 
                      
                     
@@ -959,15 +963,18 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     @Override
     public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
         System.out.println("pop up menu will become visible");
-        System.out.println(arg0.getSource());
-        if(addPlayListMenu.getItem(0).isVisible()){
-            System.out.println("item is visible");
+        if (playlistnames.size() > 0) {
             
-            for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
-                
-                addPlayListMenu.getItem(i).addActionListener(new MenuItemListener());
+            if(addPlayListMenu.getItem(0).isVisible()){
+                System.out.println("item is visible");
+
+                for(int i = 0; i < addPlayListMenu.getMenuComponentCount(); i++){
+
+                    addPlayListMenu.getItem(i).addActionListener(new MenuItemListener());
+                }
             }
         }
+
     }
 
     @Override
@@ -1024,6 +1031,12 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         }
      
      }  
+     
+     public void deletePlaylist(Playlist p){
+     
+        p.dispose();
+     
+     }
         
         
         private class MenuItemListener implements ActionListener {
@@ -1082,6 +1095,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                  }
             }
         }
+
         
         
         private class Transfer extends TransferHandler {
