@@ -86,7 +86,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     BasicPlayer player;
     BasicController BC;
     
-    Playlist p; 
+    Playlist p = null;
     String userPlayList;
     JTable table;
     JScrollPane scrollPane; 
@@ -895,7 +895,12 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
             addPlayListMenu.remove(new JMenuItem(userPlayList));
             menuitems.remove(new JMenuItem(userPlayList));
-
+            
+            if (p != null) {
+                p.setVisible(false);
+                p.dispose();
+            
+            }
 
                 try {
                     mydb.DeletePlaylist(userPlayList);
@@ -912,14 +917,14 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
                     userPlayList = (String) currentNode.getUserObject();
-                    Playlist play = new Playlist();
-                    play.getLibraryPanel().setVisible(false);
-                     play.setTitle(userPlayList);
+                    p = new Playlist();
+                    p.getLibraryPanel().setVisible(false);
+                     p.setTitle(userPlayList);
                      System.out.println("This is the user playlist " + userPlayList);
                      Object [][] dataVector = mydb.getSongsFromPlaylist(userPlayList);
                      String[] columns = {"Album", "Title", "Artist","Year","Genre","Comments"};  
 //                     dm.setDataVector(dataVector, columns);
-                     play.getModel().setDataVector(dataVector, columns);
+                     p.getModel().setDataVector(dataVector, columns);
                      
 
                      
