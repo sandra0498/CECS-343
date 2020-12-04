@@ -18,6 +18,9 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
@@ -133,6 +136,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
     JPanel main;
     final JFileChooser fc;
     JSlider slider;
+    final DragSource dragSource = new DragSource();
     
     public Library() throws SQLException {
         mydb = new MyDB();
@@ -164,7 +168,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         
-        slider.addChangeListener( this);
+        slider.addChangeListener(this);
         
         
         open.addActionListener(this);
@@ -242,9 +246,10 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         }
         popup.addPopupMenuListener(this);
+        dragSource.createDefaultDragGestureRecognizer(p, DnDConstants.ACTION_COPY, dragGestureListener);
 
         
-
+        
 
 
         //DefaultMutableTreeNode createdList = new DefaultMutableTreeNode(newNode); // new node when user creates a playlist
@@ -297,7 +302,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         main.add(NextButton);
         main.add(slider);
         
-          
+        
         this.setTitle("DJ Play My Song!");
         this.add(main);
         this.setSize(500, 200);
@@ -372,12 +377,12 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         }
 
     });
+        table.setDropTarget(new MyDropTarget());
         table.setDragEnabled(true);
 //        Playlist p = new Playlist();
 //        p.table.setDropMode(DropMode.INSERT_ROWS);
-        table.setTransferHandler(new Transfer());
         
-  
+         
         this.add(main);
         this.setSize(500, 200);
         //changing this to DISPOSE_ON_CLOSE prevented the main frame being exited
@@ -387,10 +392,21 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         library.addTreeSelectionListener(new LibraryListener());
         tree.addTreeSelectionListener(this);
+        
 //        tree.addTreeExpansionListener(new PlaylistListener());
     }
     
     
+    DragGestureListener dragGestureListener = new DragGestureListener() {
+        @Override
+        public void dragGestureRecognized(DragGestureEvent dge) {
+            Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+            JTable jTable = (JTable) dge.getComponent();
+            jTable.setDragEnabled(true);
+            dge.startDrag(cursor, new TransferRows(jTable.getSelectedRows())); // gets file of selected row
+        }
+    };
+   
    
         //embed the listener in the declaration
     MouseListener mouseListener = new MouseAdapter() {
@@ -591,8 +607,6 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
       }
         
-
-          
         else {
         
                 player.resume();
@@ -1138,7 +1152,7 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
                     TableModel model = table.getModel();
 
                     int selected[] = table.getSelectedRows();
-
+                    
                     Object[] rows = new Object[6];
             //        Playlist p = new Playlist();
             //        
@@ -1163,6 +1177,59 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
         
         }
+        
+        class MyDropTarget extends DropTarget {
+            @Override
+            public  void drop(DropTargetDropEvent evt) {
+                    try {
+                            evt.acceptDrop(DnDConstants.ACTION_COPY);
+
+                            List result = new ArrayList();
+                            result = (List) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+
+
+                            for(Object o : result)
+                                    System.out.println(o.toString());
+
+                    }
+                    catch (Exception ex){
+                            ex.printStackTrace();
+                    }
+            }
+
+    }
+        
+        class TransferRows implements Transferable {
+        
+            int Rows[];
+            public TransferRows(int rows[]){
+                this.Rows = rows;
+          
+            }
+            
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor arg0) {
+              return true;
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor arg0) throws UnsupportedFlavorException, IOException {
+            
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+               
+        }
+        
+        
+        }
+        
+        
+
         
 
 
