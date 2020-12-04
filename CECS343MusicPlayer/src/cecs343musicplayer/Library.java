@@ -1201,16 +1201,17 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         
         class TransferRows implements Transferable {
         
-            int Rows[];
+            int Selected[];
             public TransferRows(int rows[]){
-                this.Rows = rows;
+                this.Selected = rows;
           
             }
             
 
         @Override
         public DataFlavor[] getTransferDataFlavors() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            
         }
 
         @Override
@@ -1221,6 +1222,27 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
         @Override
         public Object getTransferData(DataFlavor arg0) throws UnsupportedFlavorException, IOException {
             
+             Object[] rows = new Object[6];
+            //        Playlist p = new Playlist();
+            //        
+            //        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+
+                    for(int i = 0; i < Selected.length; i++){
+
+                        rows[0] = table.getValueAt(Selected[i], 0);
+                        rows[1] = table.getValueAt(Selected[i], 1);
+                        rows[2] = table.getValueAt(Selected[i], 2);
+                        rows[3] = table.getValueAt(Selected[i], 3);
+                        rows[4] = table.getValueAt(Selected[i], 4);
+                        rows[5] = table.getValueAt(Selected[i], 5);
+
+            //            model2.addRow(rows);
+                    }
+                    
+                    return rows;
+
+            
+
 //            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                
         }
