@@ -958,26 +958,8 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
             
         }
         
-//        private class AddSongListener implements ActionListener {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-//                System.out.println(userPlayList);
-//
-//            }
-//        
-//        
-//        
-//        }
-//        
-//        public void addSongtoPlaylist(String playlist){
-//        
-//        
-//        
-//        }
-        
 
+        
 
     @Override
     public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
