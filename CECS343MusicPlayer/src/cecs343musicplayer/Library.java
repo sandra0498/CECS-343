@@ -1117,66 +1117,66 @@ public class Library extends JFrame implements ActionListener, ChangeListener, P
 
         
         
-        private class Transfer extends TransferHandler {
+        // private class Transfer extends TransferHandler {
         
 
-            @Override
-            public boolean canImport(TransferHandler.TransferSupport transferSupport){
-                return true;
-            }
+        //     @Override
+        //     public boolean canImport(TransferHandler.TransferSupport transferSupport){
+        //         return true;
+        //     }
 
-            @Override
-            public int getSourceActions(JComponent jComponent){
-              // int [] currentSelectRows = table.getSelectedRows();
-                return TransferHandler.COPY_OR_MOVE;
-            }
-            @Override
-            protected Transferable createTransferable(JComponent component){
-               return new StringSelection("Select");
-            }
-            @Override
-            public boolean importData(TransferSupport transferSupport){
-                if(transferSupport.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+        //     @Override
+        //     public int getSourceActions(JComponent jComponent){
+        //       // int [] currentSelectRows = table.getSelectedRows();
+        //         return TransferHandler.COPY_OR_MOVE;
+        //     }
+        //     @Override
+        //     protected Transferable createTransferable(JComponent component){
+        //        return new StringSelection("Select");
+        //     }
+        //     @Override
+        //     public boolean importData(TransferSupport transferSupport){
+        //         if(transferSupport.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
                     
                 
-                    try {
-                        List<File> res = (List) transferSupport.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+        //             try {
+        //                 List<File> res = (List) transferSupport.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 
-                    } catch (Exception e) {
-                    }
-                }
-                return true;
-            }
+        //             } catch (Exception e) {
+        //             }
+        //         }
+        //         return true;
+        //     }
             
-                public Object[] ExportRowsActionPerformed(ActionEvent e) throws SQLException{
-                    TableModel model = table.getModel();
+        //         public Object[] ExportRowsActionPerformed(ActionEvent e) throws SQLException{
+        //             TableModel model = table.getModel();
 
-                    int selected[] = table.getSelectedRows();
+        //             int selected[] = table.getSelectedRows();
                     
-                    Object[] rows = new Object[6];
-            //        Playlist p = new Playlist();
-            //        
-            //        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
+        //             Object[] rows = new Object[6];
+        //     //        Playlist p = new Playlist();
+        //     //        
+        //     //        DefaultTableModel model2 = (DefaultTableModel) p.table.getModel();
 
-                    for(int i = 0; i < selected.length; i++){
+        //             for(int i = 0; i < selected.length; i++){
 
-                        rows[0] = model.getValueAt(selected[i], 0);
-                        rows[1] = model.getValueAt(selected[i], 1);
-                        rows[2] = model.getValueAt(selected[i], 2);
-                        rows[3] = model.getValueAt(selected[i], 3);
-                        rows[4] = model.getValueAt(selected[i], 4);
-                        rows[5] = model.getValueAt(selected[i], 5);
+        //                 rows[0] = model.getValueAt(selected[i], 0);
+        //                 rows[1] = model.getValueAt(selected[i], 1);
+        //                 rows[2] = model.getValueAt(selected[i], 2);
+        //                 rows[3] = model.getValueAt(selected[i], 3);
+        //                 rows[4] = model.getValueAt(selected[i], 4);
+        //                 rows[5] = model.getValueAt(selected[i], 5);
 
-            //            model2.addRow(rows);
-                    }
+        //     //            model2.addRow(rows);
+        //             }
                     
-                    return rows;
+        //             return rows;
 
 
-                    }
+        //             }
             
         
-        }
+        // }
         
         class MyDropTarget extends DropTarget {
             @Override
