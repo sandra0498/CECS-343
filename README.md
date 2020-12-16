@@ -12,4 +12,4 @@ This repository consists of:
       
   
   **Semester Project: MP3 Player**
-      Jtable connected to SQL database
+          Jtable connected to SQL database
